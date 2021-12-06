@@ -30,7 +30,7 @@ mod tests {
         let mut stack = Stack::new();
         stack.push(4);
         stack.push(5);
-        stack.push(6);
+    stack.push(6);
         assert_eq!(stack.pop(), 6);
         assert_eq!(stack.pop(), 5);
         assert_eq!(stack.pop(), 4);
