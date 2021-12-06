@@ -2,16 +2,12 @@
 //!
 //! Stack implementation based on `Vec`.
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Stack<T> {
     data: Vec<T>,
 }
 
 impl<T> Stack<T> {
-    pub fn new() -> Self {
-        Stack { data: vec![] }
-    }
-
     pub fn push(&mut self, t: T) {
         self.data.push(t);
     }
@@ -27,10 +23,10 @@ mod tests {
 
     #[test]
     fn push_pop() {
-        let mut stack = Stack::new();
+        let mut stack = Stack::default();
         stack.push(4);
         stack.push(5);
-    stack.push(6);
+        stack.push(6);
         assert_eq!(stack.pop(), 6);
         assert_eq!(stack.pop(), 5);
         assert_eq!(stack.pop(), 4);
@@ -39,7 +35,7 @@ mod tests {
     #[test]
     #[should_panic]
     fn pop_empty() {
-        let mut stack = Stack::new();
+        let mut stack = Stack::default();
         stack.push(1);
         stack.pop();
         stack.pop();

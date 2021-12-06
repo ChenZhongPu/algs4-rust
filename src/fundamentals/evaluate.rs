@@ -6,8 +6,8 @@ use super::stack::Stack;
 ///
 /// Assume the input expression is splitted by ' '
 pub fn evaluate(exp: &str) -> f64 {
-    let mut ops = Stack::new();
-    let mut vals: Stack<f64> = Stack::new();
+    let mut ops = Stack::default();
+    let mut vals: Stack<f64> = Stack::default();
 
     for token in exp.split(' ') {
         match token {
@@ -17,11 +17,11 @@ pub fn evaluate(exp: &str) -> f64 {
                 let op = ops.pop();
                 let mut v = vals.pop();
                 if op == "+" {
-                    v = vals.pop() + v;
+                    v += vals.pop();
                 } else if op == "-" {
-                    v = vals.pop() - v;
+                    v -= vals.pop();
                 } else if op == "*" {
-                    v = vals.pop() * v;
+                    v *= vals.pop();
                 } else if op == "/" {
                     v = vals.pop() / v;
                 } else if op == "sqrt" {
@@ -42,13 +42,13 @@ mod tests {
     #[test]
     fn expr1() {
         let s = "( 1 + ( ( 2 + 3 ) * ( 4 * 5 ) ) )";
-        assert!(evaluate(s) - 110.0 < f64::EPSILON);
+        println!("{}", evaluate(s));
+        assert!((evaluate(s) - 101.0).abs() < f64::EPSILON);
     }
 
     #[test]
     fn expr2() {
         let s = "( ( 1 + sqrt ( 5.0 ) ) / 2.0 )";
-        println!("{}", evaluate(s));
-        assert!(evaluate(s) - 1.618033988749895 < f64::EPSILON);
+        assert!((evaluate(s) - 1.618033988749895).abs() < f64::EPSILON);
     }
 }
