@@ -1,12 +1,12 @@
-//! # Binary searching 
-//! 
+//! # Binary searching
+//!
 //! Binary searching for an integer in a sorted array of integers.
-//! 
+//!
 //! The `index_of` operations takes logarithmic time in the worst case.
 
 /// Returns the index of an integer.
 /// None if not found.
-/// 
+///
 pub fn index_of(key: i32, a: &[i32]) -> Option<usize> {
     let mut lo = 0;
     let mut hi = (a.len() - 1) as i32;
@@ -15,7 +15,7 @@ pub fn index_of(key: i32, a: &[i32]) -> Option<usize> {
         if key < a[mid as usize] {
             hi = mid - 1;
         } else if key > a[mid as usize] {
-            lo = mid + 1; 
+            lo = mid + 1;
         } else {
             return Some(mid as usize);
         }

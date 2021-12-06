@@ -3,7 +3,7 @@
 use super::stack::Stack;
 
 /// Evaluate expression
-/// 
+///
 /// Assume the input expression is splitted by ' '
 pub fn evaluate(exp: &str) -> f64 {
     let mut ops = Stack::new();
@@ -11,18 +11,24 @@ pub fn evaluate(exp: &str) -> f64 {
 
     for token in exp.split(' ') {
         match token {
-            "(" => {},
+            "(" => {}
             "+" | "-" | "*" | "/" | "sqrt" => ops.push(token),
             ")" => {
                 let op = ops.pop();
                 let mut v = vals.pop();
-                if op == "+" { v = vals.pop() + v; }
-                else if op == "-" { v = vals.pop() - v; }
-                else if op == "*" { v = vals.pop() * v; }
-                else if op == "/" { v = vals.pop() / v; }
-                else if op == "sqrt" { v = v.sqrt(); }
+                if op == "+" {
+                    v = vals.pop() + v;
+                } else if op == "-" {
+                    v = vals.pop() - v;
+                } else if op == "*" {
+                    v = vals.pop() * v;
+                } else if op == "/" {
+                    v = vals.pop() / v;
+                } else if op == "sqrt" {
+                    v = v.sqrt();
+                }
                 vals.push(v);
-            },
+            }
             _ => vals.push(token.parse::<f64>().unwrap()),
         }
     }

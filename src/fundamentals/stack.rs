@@ -1,5 +1,5 @@
 //! # Stack
-//! 
+//!
 //! Stack implementation based on `Vec`.
 
 #[derive(Debug)]
@@ -28,7 +28,9 @@ mod tests {
     #[test]
     fn push_pop() {
         let mut stack = Stack::new();
-        stack.push(4); stack.push(5); stack.push(6);
+        stack.push(4);
+        stack.push(5);
+        stack.push(6);
         assert_eq!(stack.pop(), 6);
         assert_eq!(stack.pop(), 5);
         assert_eq!(stack.pop(), 4);
@@ -38,7 +40,8 @@ mod tests {
     #[should_panic]
     fn pop_empty() {
         let mut stack = Stack::new();
-        stack.push(1); stack.pop();
+        stack.push(1);
+        stack.pop();
         stack.pop();
     }
 }
