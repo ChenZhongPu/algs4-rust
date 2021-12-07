@@ -3,7 +3,7 @@
 `algs4-rust` is a Rust port of the Java code in [Algorithms, 4th Edition](https://algs4.cs.princeton.edu/).
 
 
-## Note for Dev
+## Optional for Dev
 Copy the `pre-commit` file into `.git/hooks`, and then make it executable.
 
 ```sh
