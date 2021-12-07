@@ -18,13 +18,14 @@ unsafe impl<T: Send> Send for ResizingStack<T> {}
 unsafe impl<T: Sync> Sync for ResizingStack<T> {}
 
 impl<T> ResizingStack<T> {
-    pub fn new(capacity: usize) -> Self {
-        let layout = Layout::array::<T>(capacity).unwrap();
+    pub fn new() -> Self {
+        let init_cap = 8;
+        let layout = Layout::array::<T>(init_cap).unwrap();
         let ptr = unsafe { alloc::alloc(layout) };
         ResizingStack {
             a: NonNull::new(ptr as *mut T).unwrap(),
             n: 0,
-            capacity,
+            capacity: init_cap,
             _marker: PhantomData,
         }
     }
@@ -86,13 +87,19 @@ impl<T> Drop for ResizingStack<T> {
     }
 }
 
+impl<T> Default for ResizingStack<T> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn push_pop() {
-        let mut s = ResizingStack::new(10);
+        let mut s = ResizingStack::new();
         s.push(4);
         s.push(5);
         s.push(6);
@@ -104,13 +111,15 @@ mod tests {
 
     #[test]
     fn resize() {
-        let mut s = ResizingStack::new(2);
-        s.push(4);
-        s.push(5);
-        s.push(6); // before push -> resize
-        assert_eq!(4, s.capacity);
-        s.pop();
-        s.pop(); // after pop -> resize
-        assert_eq!(2, s.capacity);
+        let mut s = ResizingStack::new();
+        assert_eq!(8, s.capacity);
+        for i in 0..=8 {
+            s.push(i);
+        }
+        assert_eq!(16, s.capacity);
+        for _ in 0..=4 {
+            s.pop();
+        }
+        assert_eq!(8, s.capacity);
     }
 }
