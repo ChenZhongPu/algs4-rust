@@ -1,7 +1,15 @@
 #[derive(Debug)]
-struct FixedCapacityStack<T, const COUNT: usize> {
+pub struct FixedCapacityStack<T, const COUNT: usize> {
     a: [T; COUNT],
     n: usize,
+}
+
+impl<T: Sized + Default + Copy + Clone, const COUNT: usize> Default
+    for FixedCapacityStack<T, COUNT>
+{
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl<T: Sized + Default + Copy + Clone, const COUNT: usize> FixedCapacityStack<T, COUNT> {
