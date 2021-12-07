@@ -1,3 +1,5 @@
+//! # FixedCapacityStack
+
 #[derive(Debug)]
 pub struct FixedCapacityStack<T, const COUNT: usize> {
     a: [T; COUNT],
@@ -33,9 +35,13 @@ impl<T: Sized + Default + Copy + Clone, const COUNT: usize> FixedCapacityStack<T
         self.n += 1;
     }
 
-    pub fn pop(&mut self) -> T {
-        self.n -= 1;
-        self.a[self.n]
+    pub fn pop(&mut self) -> Option<T> {
+        if self.n == 0 {
+            None
+        } else {
+            self.n -= 1;
+            Some(self.a[self.n])
+        }
     }
 }
 
@@ -63,8 +69,9 @@ mod tests {
         s.push(4);
         s.push(5);
         s.push(6);
-        assert_eq!(s.pop(), 6);
-        assert_eq!(s.pop(), 5);
-        assert_eq!(s.pop(), 4);
+        assert_eq!(s.pop(), Some(6));
+        assert_eq!(s.pop(), Some(5));
+        assert_eq!(s.pop(), Some(4));
+        assert_eq!(s.pop(), None);
     }
 }
