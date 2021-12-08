@@ -1,6 +1,8 @@
 //! # Resizing Array Stack
 use std::alloc::{self, Layout};
+use std::iter::Rev;
 use std::marker::PhantomData;
+use std::ops::Deref;
 use std::ptr;
 use std::ptr::NonNull;
 
@@ -75,6 +77,51 @@ impl<T> ResizingStack<T> {
     }
 }
 
+impl<T> Deref for ResizingStack<T> {
+    type Target = [T];
+
+    fn deref(&self) -> &Self::Target {
+        unsafe { std::slice::from_raw_parts(self.a.as_ptr(), self.n) }
+    }
+}
+
+impl<T> ResizingStack<T> {
+    pub fn values(&self) -> impl Iterator<Item = &T> {
+        self.deref().iter().rev()
+    }
+}
+
+pub struct StackIter<'a, T> {
+    inner: Rev<std::slice::Iter<'a, T>>,
+}
+
+impl<'a, T> Iterator for StackIter<'a, T> {
+    type Item = &'a T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.inner.next()
+    }
+}
+
+impl<T> ResizingStack<T> {
+    pub fn iter(&self) -> StackIter<'_, T> {
+        StackIter {
+            inner: self.deref().iter().rev(),
+        }
+    }
+}
+
+impl<'a, T> IntoIterator for &'a ResizingStack<T> {
+    type Item = &'a T;
+    type IntoIter = StackIter<'a, T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        StackIter {
+            inner: self.deref().iter().rev(),
+        }
+    }
+}
+
 impl<T> Drop for ResizingStack<T> {
     fn drop(&mut self) {
         if self.capacity != 0 {
@@ -95,6 +142,8 @@ impl<T> Default for ResizingStack<T> {
 
 #[cfg(test)]
 mod tests {
+    use std::vec;
+
     use super::*;
 
     #[test]
@@ -121,5 +170,68 @@ mod tests {
             s.pop();
         }
         assert_eq!(8, s.capacity);
+    }
+
+    #[test]
+    fn values() {
+        let mut s = ResizingStack::new();
+        s.push(4);
+        s.push(5);
+        s.push(6);
+
+        let mut iterator = s.values();
+        assert_eq!(iterator.next(), Some(&6));
+        assert_eq!(iterator.next(), Some(&5));
+        assert_eq!(iterator.next(), Some(&4));
+        assert_eq!(iterator.next(), None);
+    }
+
+    // #[test]
+    // fn into_iter() {
+    //     let mut s = ResizingStack::new();
+    //     s.push(4);
+    //     s.push(5);
+    //     s.push(6);
+
+    //     let mut iterator = s.into_iter();
+    //     assert_eq!(iterator.next(), Some(6));
+    //     assert_eq!(iterator.next(), Some(5));
+    //     assert_eq!(iterator.next(), Some(4));
+    //     assert_eq!(iterator.next(), None);
+    // }
+
+    #[test]
+    fn iter() {
+        let mut s = ResizingStack::new();
+        s.push(4);
+        s.push(5);
+        s.push(6);
+
+        let mut iterator = s.iter();
+        assert_eq!(iterator.next(), Some(&6));
+        assert_eq!(iterator.next(), Some(&5));
+        assert_eq!(iterator.next(), Some(&4));
+        assert_eq!(iterator.next(), None);
+    }
+
+    #[test]
+    fn for_loop() {
+        let mut s = ResizingStack::new();
+        s.push(4);
+        s.push(5);
+        s.push(6);
+        // &s -> s.iter() -> IntoIterator::into_iter(&v)
+
+        let mut v = vec![];
+        for &i in &s {
+            v.push(i);
+        }
+        assert_eq!(v, vec![6, 5, 4]);
+
+        let mut v = vec![];
+        for &i in s.iter() {
+            v.push(i);
+        }
+        assert_eq!(v, vec![6, 5, 4]);
     }
 }
