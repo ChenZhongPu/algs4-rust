@@ -122,6 +122,23 @@ impl<'a, T> IntoIterator for &'a ResizingStack<T> {
     }
 }
 
+pub struct IntoIter<T>(ResizingStack<T>);
+
+impl<T> Iterator for IntoIter<T> {
+    type Item = T;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0.pop()
+    }
+}
+
+impl<T> IntoIterator for ResizingStack<T> {
+    type Item = T;
+    type IntoIter = IntoIter<T>;
+    fn into_iter(self) -> Self::IntoIter {
+        IntoIter(self)
+    }
+}
+
 impl<T> Drop for ResizingStack<T> {
     fn drop(&mut self) {
         if self.capacity != 0 {
@@ -186,19 +203,19 @@ mod tests {
         assert_eq!(iterator.next(), None);
     }
 
-    // #[test]
-    // fn into_iter() {
-    //     let mut s = ResizingStack::new();
-    //     s.push(4);
-    //     s.push(5);
-    //     s.push(6);
+    #[test]
+    fn into_iter() {
+        let mut s = ResizingStack::new();
+        s.push(4);
+        s.push(5);
+        s.push(6);
 
-    //     let mut iterator = s.into_iter();
-    //     assert_eq!(iterator.next(), Some(6));
-    //     assert_eq!(iterator.next(), Some(5));
-    //     assert_eq!(iterator.next(), Some(4));
-    //     assert_eq!(iterator.next(), None);
-    // }
+        let mut iterator = s.into_iter();
+        assert_eq!(iterator.next(), Some(6));
+        assert_eq!(iterator.next(), Some(5));
+        assert_eq!(iterator.next(), Some(4));
+        assert_eq!(iterator.next(), None);
+    }
 
     #[test]
     fn iter() {

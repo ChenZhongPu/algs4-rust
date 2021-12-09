@@ -80,6 +80,32 @@ impl<'a, T> Iterator for Iter<'a, T> {
     }
 }
 
+pub struct IntoIter<T>(LinkedStack<T>);
+
+// `cargo clippy` will complain `into_iter()`
+// https://github.com/rust-unofficial/too-many-lists/issues/107
+
+// impl<T> LinkedStack<T> {
+//     pub fn into_iter(self) -> IntoIter<T> {
+//         IntoIter(self)
+//     }
+// }
+
+impl<T> Iterator for IntoIter<T> {
+    type Item = T;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0.pop()
+    }
+}
+
+impl<T> IntoIterator for LinkedStack<T> {
+    type Item = T;
+    type IntoIter = IntoIter<T>;
+    fn into_iter(self) -> Self::IntoIter {
+        IntoIter(self)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -107,6 +133,20 @@ mod tests {
         assert_eq!(iterator.next(), Some(&6));
         assert_eq!(iterator.next(), Some(&5));
         assert_eq!(iterator.next(), Some(&4));
+        assert_eq!(iterator.next(), None);
+    }
+
+    #[test]
+    fn into_iter() {
+        let mut s = LinkedStack::new();
+        s.push(4);
+        s.push(5);
+        s.push(6);
+
+        let mut iterator = s.into_iter();
+        assert_eq!(iterator.next(), Some(6));
+        assert_eq!(iterator.next(), Some(5));
+        assert_eq!(iterator.next(), Some(4));
         assert_eq!(iterator.next(), None);
     }
 }
