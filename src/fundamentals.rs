@@ -5,3 +5,6 @@ pub mod linked_stack;
 pub mod queue;
 pub mod resizing_stack;
 pub mod stack;
+pub mod three_sum;
+pub mod three_sum_fast;
+pub mod two_sum_fast;
