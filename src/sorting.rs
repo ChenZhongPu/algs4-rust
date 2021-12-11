@@ -4,5 +4,6 @@ pub mod merge_bu;
 pub mod merge_bu2;
 pub mod merge_slice;
 pub mod quick;
+pub mod quick2;
 pub mod selection;
 pub mod shell;
