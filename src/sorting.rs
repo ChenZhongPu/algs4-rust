@@ -4,6 +4,7 @@ pub mod merge;
 pub mod merge_bu;
 pub mod merge_bu2;
 pub mod merge_slice;
+pub mod min_pq;
 pub mod quick;
 pub mod quick2;
 pub mod quick_three_way;

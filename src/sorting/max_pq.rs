@@ -1,5 +1,5 @@
-//! # Heap priority queue
-//!
+//! # Max priority queue
+//! Max priority queue implemented with a binary heap.
 //! The largest key in a heap-sorted binary tree is found at the root.
 use std::cmp::PartialOrd;
 
@@ -23,6 +23,13 @@ impl<T: Default + Copy + PartialOrd> MaxPQ<T> {
 
     pub fn size(&self) -> usize {
         self.n
+    }
+
+    pub fn max(&self) -> Option<T> {
+        if self.is_empty() {
+            return None;
+        }
+        Some(self.pq[1])
     }
 
     pub fn insert(&mut self, t: T) {
@@ -139,5 +146,20 @@ mod tests {
         //   /   \    /
         // (A)   (E) (E)
         assert_eq!(pq.del_max(), Some('P'));
+    }
+
+    #[test]
+    fn max() {
+        let mut pq = MaxPQ::new(5);
+        pq.insert(4);
+        pq.insert(6);
+        pq.insert(5);
+        assert_eq!(pq.max(), Some(6));
+        pq.del_max();
+        assert_eq!(pq.max(), Some(5));
+        pq.del_max();
+        assert_eq!(pq.max(), Some(4));
+        pq.del_max();
+        assert_eq!(pq.max(), None)
     }
 }
