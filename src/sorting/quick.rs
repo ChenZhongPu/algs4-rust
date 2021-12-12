@@ -7,16 +7,18 @@ pub fn sort<T: PartialOrd>(a: &mut [T]) {
     _sort(a, 0, a.len() - 1);
 }
 
-// note `j` can be `0`, so `lo` and `hi` should be `isize`.
+// note `j` can be `0`, so one solution is to let `lo` and `hi`  be `isize`.
 // another solution is to check whether `j` is `0`.
+//     if j > 0 {
+//       _sort(a, lo, j - 1);
+//      }
 fn _sort<T: PartialOrd>(a: &mut [T], lo: usize, hi: usize) {
     if hi <= lo {
         return;
     }
     let j = partition(a, lo, hi);
-    if j > 0 {
-        _sort(a, lo, j - 1);
-    }
+
+    _sort(a, lo, j.saturating_sub(1));
     _sort(a, j + 1, hi);
 }
 
