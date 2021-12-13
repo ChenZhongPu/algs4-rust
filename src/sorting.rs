@@ -1,3 +1,5 @@
+pub mod heap;
+pub mod heap2;
 pub mod insertion;
 pub mod max_pq;
 pub mod merge;
