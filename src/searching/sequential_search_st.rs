@@ -156,7 +156,7 @@ mod tests {
         for &k in st.keys() {
             v.push(k);
         }
-        v.sort();
+        v.sort_unstable();
         assert_eq!(v, vec![1, 2, 3]);
     }
 }
