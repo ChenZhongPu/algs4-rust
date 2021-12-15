@@ -72,6 +72,7 @@ impl<K: Eq, V> SequentialSearchST<K, V> {
                 None => return,
                 Some(node) if node.key == *k => {
                     *current = node.next.take();
+                    self.n -= 1;
                     return;
                 }
                 Some(node) => {
@@ -136,12 +137,16 @@ mod tests {
         st.put(3, String::from("three"));
         st.put(4, String::from("four"));
 
+        assert_eq!(st.size(), 4);
+
         assert!(st.contains(&1));
         st.delete(&1);
+        assert_eq!(st.size(), 3);
         assert!(!st.contains(&1));
 
         assert!(st.contains(&3));
         st.delete(&3);
+        assert_eq!(st.size(), 2);
         assert!(!st.contains(&3));
     }
 
