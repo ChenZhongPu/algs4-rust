@@ -130,6 +130,22 @@ mod tests {
     }
 
     #[test]
+    fn put_replace() {
+        let mut st = SequentialSearchST::new();
+        st.put(1, String::from("one"));
+        st.put(2, String::from("two"));
+        st.put(3, String::from("three"));
+
+        st.put(1, String::from("ONE"));
+        st.put(2, String::from("TWO"));
+        st.put(3, String::from("THREE"));
+
+        assert_eq!(st.get(&1), Some(&String::from("ONE")));
+        assert_eq!(st.get(&2), Some(&String::from("TWO")));
+        assert_eq!(st.get(&3), Some(&String::from("THREE")));
+    }
+
+    #[test]
     fn delete() {
         let mut st = SequentialSearchST::new();
         st.put(1, String::from("one"));
