@@ -140,6 +140,7 @@ impl<K: Ord, V> BST<K, V> {
     }
 
     // https://stackoverflow.com/questions/64043682/
+    // `delete` will
     fn _delete(mut x: Box<Node<K, V>>, target: &K) -> Link<K, V> {
         if target < &x.key {
             if let Some(left) = x.left.take() {
@@ -367,7 +368,7 @@ impl<K: Ord, V> BST<K, V> {
 
 impl<K: Ord, V> Default for BST<K, V> {
     fn default() -> Self {
-         Self::new()
+        Self::new()
     }
 }
 
@@ -463,5 +464,7 @@ mod tests {
 
         st.delete(&8);
         assert_eq!(st.max(), Some(&6));
+
+        assert_eq!(st.size(), 4);
     }
 }
