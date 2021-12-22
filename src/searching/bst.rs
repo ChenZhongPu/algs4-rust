@@ -365,6 +365,12 @@ impl<K: Ord, V> BST<K, V> {
     }
 }
 
+impl<K: Ord, V> Default for BST<K, V> {
+    fn default() -> Self {
+         Self::new()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
