@@ -1,6 +1,6 @@
 //! # Binary search tree symbol table
 //!
-//! refactor `delete`
+//! refactor `delete`; add `keys`
 
 use std::cmp::Ord;
 use std::cmp::Ordering;
@@ -27,6 +27,7 @@ impl<K: Ord, V> Node<K, V> {
         }
     }
 
+    // https://stackoverflow.com/questions/40944473
     pub fn in_order<'a>(&'a self, result: &mut Vec<&'a K>) {
         if let Some(ref left) = self.left {
             left.in_order(result);
