@@ -37,6 +37,40 @@ impl<K: Ord, V> Node<K, V> {
             right.in_order(result);
         }
     }
+
+    // `lo` None means `min`; while `hi` None means `max`
+    pub fn range_in_order<'a, 'b>(
+        &'a self,
+        lo: Option<&'b K>,
+        hi: Option<&'b K>,
+        result: &mut Vec<&'a K>,
+    ) {
+        let cmp_lo = match lo {
+            Some(lo) => lo.cmp(&self.key),
+            _ => Ordering::Less,
+        };
+
+        let cmp_hi = match hi {
+            Some(hi) => hi.cmp(&self.key),
+            _ => Ordering::Greater,
+        };
+
+        if cmp_lo == Ordering::Less {
+            if let Some(ref left) = self.left {
+                left.range_in_order(lo, hi, result);
+            }
+        }
+
+        if cmp_lo.is_le() && cmp_hi.is_ge() {
+            result.push(&self.key);
+        }
+
+        if cmp_hi == Ordering::Greater {
+            if let Some(ref right) = self.right {
+                right.range_in_order(lo, hi, result);
+            }
+        }
+    }
 }
 
 pub struct BST<K, V> {
@@ -195,30 +229,31 @@ impl<K: Ord, V> BST<K, V> {
     }
 
     pub fn keys(&self) -> Iter<'_, K, V> {
-        Iter::new(&self.root)
+        Iter::new(&self.root, self.min(), self.max())
+    }
+
+    pub fn range_keys(&self, lo: &K, hi: &K) -> Iter<'_, K, V> {
+        Iter::new(&self.root, Some(lo), Some(hi))
     }
 }
 
 pub struct Iter<'a, K, V> {
     queue: Vec<&'a K>,
     index: usize,
-    end: usize,
     _phantom: PhantomData<V>,
 }
 
 impl<'a, K: Ord, V> Iter<'a, K, V> {
-    pub fn new(bst: &'a Link<K, V>) -> Self {
+    pub fn new(bst: &'a Link<K, V>, lo: Option<&K>, hi: Option<&K>) -> Self {
         let mut nodes = Vec::new();
-        let mut end = 0;
         if let Some(root) = bst {
-            end = root.n;
-            root.in_order(&mut nodes);
+            //root.in_order(&mut nodes);
+            root.range_in_order(lo, hi, &mut nodes);
         }
 
         Iter {
             queue: nodes,
             index: 0,
-            end,
             _phantom: PhantomData {},
         }
     }
@@ -228,7 +263,7 @@ impl<'a, K: Ord, V> Iterator for Iter<'a, K, V> {
     type Item = &'a K;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.index < self.end {
+        if self.index < self.queue.len() {
             let item = self.queue[self.index];
             self.index += 1;
             Some(item)
@@ -514,5 +549,12 @@ mod tests {
         }
 
         assert_eq!(v, vec![&1, &2, &3, &5, &6, &8]);
+
+        let mut v = Vec::new();
+        for key in st.range_keys(&3, &7) {
+            v.push(key);
+        }
+
+        assert_eq!(v, vec![&3, &5, &6]);
     }
 }
