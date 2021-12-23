@@ -232,7 +232,7 @@ impl<K: Ord, V> BST<K, V> {
 
     /// Returns the largest key in the symbol table
     /// less than or equal to `key`.
-    pub fn floor<'a, 'b>(&'a self, key: &'b K) -> Option<&'a K> {
+    pub fn floor(&self, key: &K) -> Option<&K> {
         Self::_floor(&self.root, key)
     }
 
@@ -252,7 +252,7 @@ impl<K: Ord, V> BST<K, V> {
     }
 
     /// Returns the smallest key in the symbol table greater than or equal to `key`.
-    pub fn ceiling<'a, 'b>(&'a self, key: &'b K) -> Option<&'a K> {
+    pub fn ceiling(&self, key: &K) -> Option<&K> {
         Self::_ceiling(&self.root, key)
     }
 
