@@ -302,7 +302,7 @@ impl<K: Ord, V> BST<K, V> {
             Some(node) => match key.cmp(&node.key) {
                 Ordering::Equal => Self::_size(&node.left),
                 Ordering::Greater => 1 + Self::_size(&node.left) + Self::_rank(&node.right, key),
-                Ordering::Less => Self::_size(&node.left),
+                Ordering::Less => Self::_rank(&node.left, key),
             },
             _ => 0,
         }
@@ -424,6 +424,7 @@ mod tests {
 
         assert_eq!(st.rank(&1), 0);
         assert_eq!(st.rank(&5), 3);
+        assert_eq!(st.rank(&4), 3);
     }
 
     #[test]

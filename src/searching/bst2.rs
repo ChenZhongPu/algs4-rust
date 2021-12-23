@@ -100,6 +100,87 @@ impl<K: Ord, V> BST<K, V> {
     pub fn max(&self) -> Option<&K> {
         Self::_max(&self.root)
     }
+
+    fn _floor<'a, 'b>(x: &'a Link<K, V>, k: &'b K) -> Option<&'a K> {
+        match x {
+            Some(node) => match k.cmp(&node.key) {
+                Ordering::Equal => Some(&node.key),
+                Ordering::Less => Self::_floor(&node.left, k),
+                Ordering::Greater => match Self::_floor(&node.right, k) {
+                    x_right @ Some(_) => x_right,
+                    _ => Some(&node.key),
+                },
+            },
+            _ => None,
+        }
+    }
+
+    /// Returns the largest key in the symbol table
+    /// less than or equal to `key`.
+    pub fn floor(&self, k: &K) -> Option<&K> {
+        Self::_floor(&self.root, k)
+    }
+
+    fn _ceiling<'a, 'b>(x: &'a Link<K, V>, k: &'b K) -> Option<&'a K> {
+        match x {
+            Some(node) => match k.cmp(&node.key) {
+                Ordering::Equal => Some(&node.key),
+                Ordering::Greater => Self::_ceiling(&node.right, k),
+                Ordering::Less => match Self::_ceiling(&node.left, k) {
+                    x_left @ Some(_) => x_left,
+                    _ => Some(&node.key),
+                },
+            },
+            _ => None,
+        }
+    }
+
+    /// Returns the smallest key in the symbol table greater than or equal to `key`.
+    pub fn ceiling(&self, k: &K) -> Option<&K> {
+        Self::_ceiling(&self.root, k)
+    }
+
+    /// Return the key in the symbol table of a given `rank`.
+    /// Note rank 0 is the smallest key.
+    pub fn select(&self, rank: usize) -> Option<&K> {
+        if rank >= self.size() {
+            return None;
+        }
+
+        Self::_select(&self.root, rank)
+    }
+
+    fn _select(x: &Link<K, V>, rank: usize) -> Option<&K> {
+        match x {
+            Some(node) => {
+                let left_size = Self::_size(&node.left);
+                match rank.cmp(&left_size) {
+                    Ordering::Equal => Some(&node.key),
+                    Ordering::Less => Self::_select(&node.left, rank),
+                    Ordering::Greater => Self::_select(&node.right, rank - left_size - 1),
+                }
+            }
+            _ => None,
+        }
+    }
+
+    fn _rank(x: &Link<K, V>, k: &K) -> usize {
+        match x {
+            Some(node) => {
+                let left_size = Self::_size(&node.left);
+                match k.cmp(&node.key) {
+                    Ordering::Equal => left_size,
+                    Ordering::Less => Self::_rank(&node.left, k),
+                    Ordering::Greater => 1 + left_size + Self::_rank(&node.right, k),
+                }
+            }
+            _ => 0,
+        }
+    }
+
+    pub fn rank(&self, k: &K) -> usize {
+        Self::_rank(&self.root, k)
+    }
 }
 
 // put
@@ -304,6 +385,21 @@ mod tests {
 
         assert_eq!(st.max(), Some(&8));
         assert_eq!(st.min(), Some(&1));
+
+        assert_eq!(st.floor(&6), Some(&6));
+        assert_eq!(st.floor(&7), Some(&6));
+        assert_eq!(st.floor(&0), None);
+
+        assert_eq!(st.ceiling(&7), Some(&8));
+        assert_eq!(st.ceiling(&8), Some(&8));
+        assert_eq!(st.ceiling(&9), None);
+
+        assert_eq!(st.select(0), Some(&1));
+        assert_eq!(st.select(2), Some(&3));
+
+        assert_eq!(st.rank(&1), 0);
+        assert_eq!(st.rank(&5), 3);
+        assert_eq!(st.rank(&4), 3);
     }
 
     #[test]
