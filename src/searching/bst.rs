@@ -461,7 +461,7 @@ mod tests {
         st.put(6, String::from("six"));
 
         st.delete(&3);
-        assert_eq!(st.contains(&3), false);
+        assert!(!st.contains(&3));
 
         st.delete(&8);
         assert_eq!(st.max(), Some(&6));

@@ -4,10 +4,11 @@
 
 use std::cmp::Ord;
 use std::cmp::Ordering;
+use std::marker::PhantomData;
 
 type Link<K, V> = Option<Box<Node<K, V>>>;
 #[derive(Debug)]
-struct Node<K, V> {
+pub struct Node<K, V> {
     key: K,
     val: V,
     left: Link<K, V>,
@@ -16,13 +17,23 @@ struct Node<K, V> {
 }
 
 impl<K: Ord, V> Node<K, V> {
-    fn new(k: K, v: V) -> Self {
+    pub fn new(k: K, v: V) -> Self {
         Node {
             key: k,
             val: v,
             left: None,
             right: None,
             n: 1,
+        }
+    }
+
+    pub fn in_order<'a>(&'a self, result: &mut Vec<&'a K>) {
+        if let Some(ref left) = self.left {
+            left.in_order(result);
+        }
+        result.push(&self.key);
+        if let Some(ref right) = self.right {
+            right.in_order(result);
         }
     }
 }
@@ -180,6 +191,49 @@ impl<K: Ord, V> BST<K, V> {
 
     pub fn rank(&self, k: &K) -> usize {
         Self::_rank(&self.root, k)
+    }
+
+    pub fn keys(&self) -> Iter<'_, K, V> {
+        Iter::new(&self.root)
+    }
+}
+
+pub struct Iter<'a, K, V> {
+    queue: Vec<&'a K>,
+    index: usize,
+    end: usize,
+    _phantom: PhantomData<V>,
+}
+
+impl<'a, K: Ord, V> Iter<'a, K, V> {
+    pub fn new(bst: &'a Link<K, V>) -> Self {
+        let mut nodes = Vec::new();
+        let mut end = 0;
+        if let Some(root) = bst {
+            end = root.n;
+            root.in_order(&mut nodes);
+        }
+
+        Iter {
+            queue: nodes,
+            index: 0,
+            end,
+            _phantom: PhantomData {},
+        }
+    }
+}
+
+impl<'a, K: Ord, V> Iterator for Iter<'a, K, V> {
+    type Item = &'a K;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.index < self.end {
+            let item = self.queue[self.index];
+            self.index += 1;
+            Some(item)
+        } else {
+            None
+        }
     }
 }
 
@@ -436,10 +490,28 @@ mod tests {
         st.put(6, String::from("six"));
 
         st.delete(&3);
-        assert_eq!(st.contains(&3), false);
+        assert!(!st.contains(&3));
         st.delete(&8);
         assert_eq!(st.max(), Some(&6));
 
         assert_eq!(st.size(), 4);
+    }
+
+    #[test]
+    fn keys() {
+        let mut st = BST::new();
+        st.put(1, String::from("one"));
+        st.put(5, String::from("five"));
+        st.put(3, String::from("three"));
+        st.put(2, String::from("two"));
+        st.put(8, String::from("eight"));
+        st.put(6, String::from("six"));
+
+        let mut v = Vec::new();
+        for key in st.keys() {
+            v.push(key);
+        }
+
+        assert_eq!(v, vec![&1, &2, &3, &5, &6, &8]);
     }
 }
