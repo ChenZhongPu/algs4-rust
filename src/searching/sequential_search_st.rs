@@ -210,17 +210,21 @@ mod tests {
         st.put(1, String::from("one"));
         st.put(2, String::from("two"));
         st.put(3, String::from("three"));
-        
+
         let mut v1 = vec![];
         let mut v2 = vec![];
         for (k, v) in st.into_items() {
             v1.push(k);
             v2.push(v);
         }
-        v1.sort_unstable();
-        v2.sort_unstable();
-        assert_eq!(v1, vec![1, 2, 3]);
-        assert_eq!(v2, vec![String::from("one"), 
-        String::from("three"), String::from("two")]);
+        assert_eq!(v1, vec![3, 2, 1]);
+        assert_eq!(
+            v2,
+            vec![
+                String::from("three"),
+                String::from("two"),
+                String::from("one")
+            ]
+        );
     }
 }

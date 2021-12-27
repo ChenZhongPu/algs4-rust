@@ -1,6 +1,9 @@
 //! # A symbol table implemented with a separate-chaining hash table.
 use crate::searching::sequential_search_st::SequentialSearchST;
-use std::{hash::{Hash, Hasher}, collections::hash_map::DefaultHasher};
+use std::{
+    collections::hash_map::DefaultHasher,
+    hash::{Hash, Hasher},
+};
 
 pub struct SeparateChainingHashST<K, V> {
     n: usize, // number of key-value pairs
@@ -44,20 +47,23 @@ impl<K: Eq + Hash, V> SeparateChainingHashST<K, V> {
         self.get(k).is_some()
     }
 
-    // resize the hash table to have the given number of chains,
-    // rehashing all of the keys
-    fn resize(self, chains: usize) -> Self {
+    fn resize(&mut self, chains: usize) {
         let mut tmp = SeparateChainingHashST::new(chains);
-        for table in self.st.into_iter() {
+
+        while let Some(table) = self.st.pop() {
             for (k, v) in table.into_items() {
                 tmp.put(k, v);
             }
         }
-        tmp
+        *self = tmp;
     }
 
     /// Inserts the specified key-value pair into the symbol table, overwriting the old value with the new value if the symbol table already contains the specified key.
     pub fn put(&mut self, k: K, v: V) {
+        // double table size if average length of list >= 10
+        if self.n >= 10 * self.m {
+            self.resize(2 * self.m);
+        }
         let i = self.hash(&k);
         if !self.st[i].contains(&k) {
             self.n += 1;
@@ -73,6 +79,10 @@ impl<K: Eq + Hash, V> SeparateChainingHashST<K, V> {
         }
 
         self.st[i].delete(k);
+        // halve table size if average length of list <= 2
+        if self.m < 4 && self.n <= 2 * self.m {
+            self.resize(self.m / 2);
+        }
     }
 }
 
@@ -112,7 +122,7 @@ mod tests {
         assert_eq!(st.get(&2), Some(&String::from("TWO")));
         assert_eq!(st.get(&3), Some(&String::from("THREE")));
     }
-    
+
     #[test]
     fn delete() {
         let mut st = SeparateChainingHashST::default();
@@ -134,4 +144,20 @@ mod tests {
         assert!(!st.contains(&3));
     }
 
+    #[test]
+    fn resize() {
+        let mut st = SeparateChainingHashST::default();
+        st.put(1, String::from("one"));
+        st.put(2, String::from("two"));
+        st.put(3, String::from("three"));
+        st.put(4, String::from("four"));
+
+        st.resize(8);
+
+        assert_eq!(st.size(), 4);
+        assert_eq!(st.get(&1), Some(&String::from("one")));
+        assert_eq!(st.get(&2), Some(&String::from("two")));
+        assert_eq!(st.get(&3), Some(&String::from("three")));
+        assert_eq!(st.m, 8);
+    }
 }
