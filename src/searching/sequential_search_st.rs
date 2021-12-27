@@ -114,8 +114,31 @@ impl<K, V> SequentialSearchST<K, V> {
     }
 }
 
+pub struct IntoItemIter<K, V> {
+    next: Link<K, V>,
+}
+
+impl<K, V> Iterator for IntoItemIter<K, V> {
+    type Item = (K, V);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.next.take().map(|node| {
+            self.next = node.next;
+            (node.key, node.val)
+        })
+    }
+}
+
+impl<K, V> SequentialSearchST<K, V> {
+    pub fn into_items(self) -> IntoItemIter<K, V> {
+        IntoItemIter { next: self.first }
+    }
+}
+
 #[cfg(test)]
 mod tests {
+    use std::vec;
+
     use super::*;
 
     #[test]
@@ -179,5 +202,25 @@ mod tests {
         }
         v.sort_unstable();
         assert_eq!(v, vec![1, 2, 3]);
+    }
+
+    #[test]
+    fn items() {
+        let mut st = SequentialSearchST::new();
+        st.put(1, String::from("one"));
+        st.put(2, String::from("two"));
+        st.put(3, String::from("three"));
+        
+        let mut v1 = vec![];
+        let mut v2 = vec![];
+        for (k, v) in st.into_items() {
+            v1.push(k);
+            v2.push(v);
+        }
+        v1.sort_unstable();
+        v2.sort_unstable();
+        assert_eq!(v1, vec![1, 2, 3]);
+        assert_eq!(v2, vec![String::from("one"), 
+        String::from("three"), String::from("two")]);
     }
 }
