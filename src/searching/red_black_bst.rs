@@ -8,16 +8,16 @@ use std::cmp::Ordering;
 
 #[derive(PartialEq, Debug, Clone, Copy)]
 enum Color {
-    RED,
-    BLACK,
+    Red,
+    Black,
 }
 
 impl Color {
     fn flip(&self) -> Color {
-        if *self == Color::RED {
-            Color::BLACK
+        if *self == Color::Red {
+            Color::Black
         } else {
-            Color::RED
+            Color::Red
         }
     }
 }
@@ -39,7 +39,7 @@ impl<K: Ord, V> Node<K, V> {
             val: v,
             left: None,
             right: None,
-            color: Color::RED, // when inserted, the default color is `RED`
+            color: Color::Red, // when inserted, the default color is `RED`
             n: 1,
         }
     }
@@ -61,10 +61,10 @@ impl<K: Ord, V> Node<K, V> {
     fn rotate_left(mut self) -> Box<Node<K, V>> {
         match self.right {
             Some(mut x) => {
-                assert_eq!(x.color, Color::RED);
+                assert_eq!(x.color, Color::Red);
                 self.right = x.left.take();
                 x.color = self.color;
-                self.color = Color::RED;
+                self.color = Color::Red;
                 x.n = self.n;
                 self.n = 1 + RedBlackBST::_size(&self.left) + RedBlackBST::_size(&self.right);
                 x.left = Some(Box::new(self));
@@ -82,10 +82,10 @@ impl<K: Ord, V> Node<K, V> {
     fn rotate_right(mut self) -> Box<Node<K, V>> {
         match self.left {
             Some(mut x) => {
-                assert_eq!(x.color, Color::RED);
+                assert_eq!(x.color, Color::Red);
                 self.left = x.right.take();
                 x.color = self.color;
-                self.color = Color::RED;
+                self.color = Color::Red;
                 x.n = self.n;
                 self.n = 1 + RedBlackBST::_size(&self.left) + RedBlackBST::_size(&self.right);
                 x.right = Some(Box::new(self));
@@ -119,7 +119,7 @@ impl<K: Ord, V> RedBlackBST<K, V> {
 
     fn is_red(x: &Link<K, V>) -> bool {
         match x {
-            Some(node) => node.color == Color::RED,
+            Some(node) => node.color == Color::Red,
             _ => false, // `None` is black by default
         }
     }
@@ -211,9 +211,129 @@ impl<K: Ord, V> RedBlackBST<K, V> {
         let new_node = Box::new(Node::new(k, v));
         self.root = Self::_put(new_node, self.root.take());
         if let Some(ref mut root) = self.root {
-            root.color = Color::BLACK;
+            root.color = Color::Black;
         }
         assert!(self.check());
+    }
+}
+
+// Ordered symbol table methods.
+impl<K: Ord, V> RedBlackBST<K, V> {
+    fn _min(x: &Link<K, V>) -> Option<&K> {
+        match x {
+            Some(node) => match node.left {
+                Some(_) => Self::_min(&node.left),
+                _ => Some(&node.key),
+            },
+            _ => None,
+        }
+    }
+
+    /// Returns the smallest key in the symbol table.
+    pub fn min(&self) -> Option<&K> {
+        Self::_min(&self.root)
+    }
+
+    fn _max(x: &Link<K, V>) -> Option<&K> {
+        match x {
+            Some(node) => match node.right {
+                Some(_) => Self::_max(&node.right),
+                _ => Some(&node.key),
+            },
+            _ => None,
+        }
+    }
+
+    /// Returns the largest key in the symbol table.
+    pub fn max(&self) -> Option<&K> {
+        Self::_max(&self.root)
+    }
+
+    fn _floor<'a, 'b>(x: &'a Link<K, V>, k: &'b K) -> Option<&'a K> {
+        match x {
+            Some(node) => match k.cmp(&node.key) {
+                Ordering::Equal => Some(&node.key),
+                Ordering::Less => Self::_floor(&node.left, k),
+                Ordering::Greater => match Self::_floor(&node.right, k) {
+                    x_right @ Some(_) => x_right,
+                    _ => Some(&node.key),
+                },
+            },
+            _ => None,
+        }
+    }
+
+    /// Returns the largest key in the symbol table less than or equal to `key`.
+    pub fn floor(&self, k: &K) -> Option<&K> {
+        Self::_floor(&self.root, k)
+    }
+
+    fn _ceiling<'a, 'b>(x: &'a Link<K, V>, k: &'b K) -> Option<&'a K> {
+        match x {
+            Some(node) => match k.cmp(&node.key) {
+                Ordering::Equal => Some(&node.key),
+                Ordering::Greater => Self::_ceiling(&node.right, k),
+                Ordering::Less => match Self::_ceiling(&node.left, k) {
+                    x_left @ Some(_) => x_left,
+                    _ => Some(&node.key),
+                },
+            },
+            _ => None,
+        }
+    }
+
+    /// Returns the smallest key in the symbol table greater than or equal to `key`
+    pub fn ceiling(&self, k: &K) -> Option<&K> {
+        Self::_ceiling(&self.root, k)
+    }
+
+    fn _select(x: &Link<K, V>, rank: usize) -> Option<&K> {
+        match x {
+            Some(node) => {
+                let left_size = Self::_size(&node.left);
+                match left_size.cmp(&rank) {
+                    Ordering::Equal => Some(&node.key),
+                    Ordering::Greater => Self::_select(&node.left, rank),
+                    Ordering::Less => Self::_select(&node.right, rank - left_size - 1),
+                }
+            }
+            _ => None,
+        }
+    }
+
+    /// Return the key in the symbol table of a given `rank`.
+    /// Note rank 0 is the smallest key.
+    pub fn select(&self, rank: usize) -> Option<&K> {
+        if rank >= self.size() {
+            return None;
+        }
+
+        Self::_select(&self.root, rank)
+    }
+
+    fn _rank(x: &Link<K, V>, k: &K) -> usize {
+        match x {
+            Some(node) => {
+                let left_size = Self::_size(&node.left);
+                match k.cmp(&node.key) {
+                    Ordering::Equal => left_size,
+                    Ordering::Less => Self::_rank(&node.left, k),
+                    Ordering::Greater => 1 + left_size + Self::_rank(&node.right, k),
+                }
+            }
+            _ => 0,
+        }
+    }
+
+    /// Return the number of keys in the symbol table strictly less than `key`.
+    pub fn rank(&self, k: &K) -> usize {
+        Self::_rank(&self.root, k)
+    }
+}
+
+impl<K: Ord, V> Default for RedBlackBST<K, V> {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -282,7 +402,7 @@ impl<K: Ord, V> RedBlackBST<K, V> {
         let mut black = 0;
         let mut current = &self.root;
         while let Some(node) = current {
-            if node.color == Color::BLACK {
+            if node.color == Color::Black {
                 black += 1;
             }
             current = &node.left;
@@ -295,7 +415,7 @@ impl<K: Ord, V> RedBlackBST<K, V> {
         match x {
             Some(node) => {
                 let mut _b = black;
-                if node.color == Color::BLACK {
+                if node.color == Color::Black {
                     _b -= 1;
                 }
                 Self::_is_balanced(&node.left, _b) && Self::_is_balanced(&node.right, _b)
@@ -315,7 +435,7 @@ impl<K: Ord, V> RedBlackBST<K, V> {
                 if Self::is_red(&node.right) {
                     return false;
                 }
-                if node.color == Color::RED && Self::is_red(&node.left) {
+                if node.color == Color::Red && Self::is_red(&node.left) {
                     return false;
                 }
                 Self::_is_2_3(&node.left) && Self::_is_2_3(&node.right)
@@ -349,5 +469,64 @@ mod tests {
         st.put(5, String::from("FIVE"));
         assert_eq!(st.get(&5), Some(&String::from("FIVE")));
         assert_eq!(st.size(), 6);
+    }
+
+    #[test]
+    fn height() {
+        // val does not make sense in this test.
+        let mut st = RedBlackBST::new();
+        st.put('A', 1);
+        st.put('C', 2);
+        st.put('E', 3);
+        st.put('H', 4);
+        st.put('L', 5);
+        st.put('M', 6);
+        st.put('P', 7);
+        st.put('R', 8);
+        st.put('S', 9);
+        st.put('X', 10);
+        assert_eq!(st.height(), 3);
+
+        let mut st = RedBlackBST::new();
+        st.put('S', 1);
+        st.put('E', 2);
+        st.put('A', 3);
+        st.put('R', 4);
+        st.put('C', 5);
+        st.put('H', 6);
+        st.put('X', 7);
+        st.put('M', 8);
+        st.put('P', 9);
+        st.put('L', 10);
+        assert_eq!(st.height(), 3);
+    }
+
+    #[test]
+    fn min_max() {
+        let mut st = RedBlackBST::new();
+        st.put(1, String::from("one"));
+        st.put(5, String::from("five"));
+        st.put(3, String::from("three"));
+        st.put(2, String::from("two"));
+        st.put(8, String::from("eight"));
+        st.put(6, String::from("six"));
+
+        assert_eq!(st.max(), Some(&8));
+        assert_eq!(st.min(), Some(&1));
+
+        assert_eq!(st.floor(&6), Some(&6));
+        assert_eq!(st.floor(&7), Some(&6));
+        assert_eq!(st.floor(&0), None);
+
+        assert_eq!(st.ceiling(&7), Some(&8));
+        assert_eq!(st.ceiling(&8), Some(&8));
+        assert_eq!(st.ceiling(&9), None);
+
+        assert_eq!(st.select(0), Some(&1));
+        assert_eq!(st.select(2), Some(&3));
+
+        assert_eq!(st.rank(&1), 0);
+        assert_eq!(st.rank(&5), 3);
+        assert_eq!(st.rank(&4), 3);
     }
 }
