@@ -1,10 +1,10 @@
 //! # A symbol table implemented with a separate-chaining hash table.
 use crate::searching::sequential_search_st::SequentialSearchST;
+use std::marker::PhantomData;
 use std::{
     collections::hash_map::DefaultHasher,
     hash::{Hash, Hasher},
 };
-use std::marker::PhantomData;
 
 pub struct SeparateChainingHashST<K, V> {
     n: usize, // number of key-value pairs
@@ -117,10 +117,9 @@ impl<'a, K: Eq + Hash, V> Iterator for Iter<'a, K, V> {
 
 impl<K: Eq + Hash, V> SeparateChainingHashST<K, V> {
     pub fn keys(&self) -> Iter<'_, K, V> {
-        Iter::new(&self)
+        Iter::new(self)
     }
 }
-
 
 impl<K: Eq + Hash, V> Default for SeparateChainingHashST<K, V> {
     fn default() -> Self {
