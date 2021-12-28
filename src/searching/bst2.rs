@@ -239,7 +239,6 @@ impl<K: Ord, V> BST<K, V> {
 
 pub struct Iter<'a, K, V> {
     queue: Vec<&'a K>,
-    index: usize,
     _phantom: PhantomData<V>,
 }
 
@@ -253,7 +252,6 @@ impl<'a, K: Ord, V> Iter<'a, K, V> {
 
         Iter {
             queue: nodes,
-            index: 0,
             _phantom: PhantomData {},
         }
     }
@@ -263,13 +261,7 @@ impl<'a, K: Ord, V> Iterator for Iter<'a, K, V> {
     type Item = &'a K;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.index < self.queue.len() {
-            let item = self.queue[self.index];
-            self.index += 1;
-            Some(item)
-        } else {
-            None
-        }
+        self.queue.pop()
     }
 }
 
@@ -548,13 +540,14 @@ mod tests {
             v.push(key);
         }
 
+        v.sort_unstable();
         assert_eq!(v, vec![&1, &2, &3, &5, &6, &8]);
 
         let mut v = Vec::new();
         for key in st.range_keys(&3, &7) {
             v.push(key);
         }
-
+        v.sort_unstable();
         assert_eq!(v, vec![&3, &5, &6]);
     }
 }

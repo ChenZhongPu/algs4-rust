@@ -4,6 +4,7 @@ use std::{
     collections::hash_map::DefaultHasher,
     hash::{Hash, Hasher},
 };
+use std::marker::PhantomData;
 
 pub struct SeparateChainingHashST<K, V> {
     n: usize, // number of key-value pairs
@@ -86,6 +87,41 @@ impl<K: Eq + Hash, V> SeparateChainingHashST<K, V> {
     }
 }
 
+pub struct Iter<'a, K, V> {
+    queue: Vec<&'a K>,
+    _phantom: PhantomData<V>,
+}
+
+impl<'a, K: Eq + Hash, V> Iter<'a, K, V> {
+    pub fn new(hash_st: &'a SeparateChainingHashST<K, V>) -> Self {
+        let mut queue = Vec::with_capacity(hash_st.n);
+        for table in &hash_st.st {
+            for key in table.keys() {
+                queue.push(key);
+            }
+        }
+        Iter {
+            queue,
+            _phantom: PhantomData {},
+        }
+    }
+}
+
+impl<'a, K: Eq + Hash, V> Iterator for Iter<'a, K, V> {
+    type Item = &'a K;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.queue.pop()
+    }
+}
+
+impl<K: Eq + Hash, V> SeparateChainingHashST<K, V> {
+    pub fn keys(&self) -> Iter<'_, K, V> {
+        Iter::new(&self)
+    }
+}
+
+
 impl<K: Eq + Hash, V> Default for SeparateChainingHashST<K, V> {
     fn default() -> Self {
         SeparateChainingHashST::new(4)
@@ -159,5 +195,22 @@ mod tests {
         assert_eq!(st.get(&2), Some(&String::from("two")));
         assert_eq!(st.get(&3), Some(&String::from("three")));
         assert_eq!(st.m, 8);
+    }
+
+    #[test]
+    fn iterator() {
+        let mut st = SeparateChainingHashST::default();
+        st.put(1, String::from("one"));
+        st.put(2, String::from("two"));
+        st.put(3, String::from("three"));
+
+        let mut v = vec![];
+        for &k in st.keys() {
+            v.push(k);
+        }
+        v.sort_unstable();
+        assert_eq!(v, vec![1, 2, 3]);
+
+        assert_eq!(st.size(), 3);
     }
 }
