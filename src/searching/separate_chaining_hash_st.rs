@@ -6,6 +6,8 @@ use std::{
     hash::{Hash, Hasher},
 };
 
+const INIT_CAPACITY: usize = 4;
+
 pub struct SeparateChainingHashST<K, V> {
     n: usize, // number of key-value pairs
     m: usize, // hash table size
@@ -81,7 +83,7 @@ impl<K: Eq + Hash, V> SeparateChainingHashST<K, V> {
 
         self.st[i].delete(k);
         // halve table size if average length of list <= 2
-        if self.m < 4 && self.n <= 2 * self.m {
+        if self.m > INIT_CAPACITY && self.n <= 2 * self.m {
             self.resize(self.m / 2);
         }
     }
@@ -123,7 +125,7 @@ impl<K: Eq + Hash, V> SeparateChainingHashST<K, V> {
 
 impl<K: Eq + Hash, V> Default for SeparateChainingHashST<K, V> {
     fn default() -> Self {
-        SeparateChainingHashST::new(4)
+        SeparateChainingHashST::new(INIT_CAPACITY)
     }
 }
 
