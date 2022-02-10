@@ -6,3 +6,4 @@ pub mod dfs;
 pub mod dfs_paths;
 pub mod graph;
 pub mod graph_generator;
+pub mod symbol_graph;
