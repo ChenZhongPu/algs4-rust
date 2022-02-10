@@ -8,14 +8,16 @@ pub struct DepthFirstSearch {
 
 impl DepthFirstSearch {
     pub fn new(g: &Graph, s: usize) -> DepthFirstSearch {
-        DepthFirstSearch {
+        let mut df_search = DepthFirstSearch {
             marked: vec![false; g.v()],
             count: 0,
             source: s,
-        }
+        };
+        df_search.dfs(g);
+        df_search
     }
 
-    pub fn dfs(&mut self, g: &Graph) {
+    fn dfs(&mut self, g: &Graph) {
         self._dfs(g, self.source);
     }
 
@@ -59,12 +61,10 @@ mod tests {
         graph.add_edge(9, 11);
         graph.add_edge(5, 3);
 
-        let mut search = DepthFirstSearch::new(&graph, 0);
-        search.dfs(&graph);
+        let search = DepthFirstSearch::new(&graph, 0);
         assert_eq!(search.count(), 7);
 
-        let mut search = DepthFirstSearch::new(&graph, 9);
-        search.dfs(&graph);
+        let search = DepthFirstSearch::new(&graph, 9);
         assert_eq!(search.count(), 4);
     }
 }

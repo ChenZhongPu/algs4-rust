@@ -12,14 +12,16 @@ pub struct DepthFirstPaths {
 
 impl DepthFirstPaths {
     pub fn new(g: &Graph, s: usize) -> DepthFirstPaths {
-        DepthFirstPaths {
+        let mut paths = DepthFirstPaths {
             marked: vec![false; g.v()],
             edge_to: vec![-1; g.v()],
             source: s,
-        }
+        };
+        paths.dfs(g);
+        paths
     }
 
-    pub fn dfs(&mut self, g: &Graph) {
+    fn dfs(&mut self, g: &Graph) {
         self._dfs(g, self.source);
     }
 
@@ -76,11 +78,9 @@ mod test {
         // 4: 2 3
         // 5: 0 3
 
-        let mut df_path = DepthFirstPaths::new(&graph, 0);
-        df_path.dfs(&graph);
+        let df_path = DepthFirstPaths::new(&graph, 0);
 
         assert_eq!(df_path.path_to(5), vec![0, 5]);
-
         assert_eq!(df_path.path_to(2), vec![0, 5, 3, 2]);
     }
 }
