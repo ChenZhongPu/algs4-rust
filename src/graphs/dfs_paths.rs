@@ -6,7 +6,7 @@ use super::graph::Graph;
 
 pub struct DepthFirstPaths {
     marked: Vec<bool>,
-    edge_to: Vec<i32>, // last vertex on known path to this vertex
+    edge_to: Vec<usize>, // last vertex on known path to this vertex
     source: usize,
 }
 
@@ -14,7 +14,7 @@ impl DepthFirstPaths {
     pub fn new(g: &Graph, s: usize) -> DepthFirstPaths {
         let mut paths = DepthFirstPaths {
             marked: vec![false; g.v()],
-            edge_to: vec![-1; g.v()],
+            edge_to: vec![0; g.v()],
             source: s,
         };
         paths.dfs(g);
@@ -30,7 +30,7 @@ impl DepthFirstPaths {
 
         for w in g.adj(v).clone() {
             if !self.marked[w] {
-                self.edge_to[w] = v as i32;
+                self.edge_to[w] = v;
                 self._dfs(g, w);
             }
         }
@@ -48,7 +48,7 @@ impl DepthFirstPaths {
         let mut x = v;
         while x != self.source {
             paths.insert(0, x);
-            x = self.edge_to[x] as usize;
+            x = self.edge_to[x];
         }
         paths.insert(0, self.source);
         paths

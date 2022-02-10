@@ -8,8 +8,8 @@ use std::collections::VecDeque;
 use super::graph::Graph;
 
 pub struct BreadFirstPaths {
-    marked: Vec<bool>, // is a shortest path to this vertex known?
-    edge_to: Vec<i32>, // last vertex on known path to this vertex
+    marked: Vec<bool>,   // is a shortest path to this vertex known?
+    edge_to: Vec<usize>, // last vertex on known path to this vertex
     source: usize,
 }
 
@@ -17,7 +17,7 @@ impl BreadFirstPaths {
     pub fn new(g: &Graph, source: usize) -> BreadFirstPaths {
         let mut paths = BreadFirstPaths {
             marked: vec![false; g.v()],
-            edge_to: vec![-1; g.v()],
+            edge_to: vec![0; g.v()],
             source,
         };
         paths.bfs(g, source);
@@ -32,7 +32,7 @@ impl BreadFirstPaths {
             for w in g.adj(v).clone() {
                 if !self.marked[w] {
                     // save last edge on a shortest path
-                    self.edge_to[w] = v as i32;
+                    self.edge_to[w] = v;
                     self.marked[w] = true;
                     queue.push_back(w);
                 }
@@ -52,7 +52,7 @@ impl BreadFirstPaths {
         let mut x = v;
         while x != self.source {
             paths.insert(0, x);
-            x = self.edge_to[x] as usize;
+            x = self.edge_to[x];
         }
         paths.insert(0, self.source);
         paths
