@@ -3,6 +3,7 @@ pub mod bipartite;
 pub mod cc;
 pub mod cycle;
 pub mod dfs;
+pub mod dfs_directed_paths;
 pub mod dfs_paths;
 pub mod digraph;
 pub mod directed_dfs;
