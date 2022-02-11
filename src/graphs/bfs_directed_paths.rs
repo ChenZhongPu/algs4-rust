@@ -120,5 +120,9 @@ mod test {
         assert_eq!(search.has_path_to(0), true);
         assert_eq!(search.dist_to(0), 2);
         assert_eq!(search.path_to(0).collect::<Vec<usize>>(), vec![3, 2, 0]);
+
+        assert_eq!(search.has_path_to(6), false);
+        assert_eq!(search.dist_to(6), usize::MAX);
+        assert_eq!(search.path_to(6).collect::<Vec<usize>>(), vec![]);
     }
 }
