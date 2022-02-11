@@ -1,3 +1,4 @@
+pub mod bfs_directed_paths;
 pub mod bfs_paths;
 pub mod bipartite;
 pub mod cc;
