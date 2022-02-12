@@ -15,3 +15,4 @@ pub mod graph_generator;
 pub mod symbol_digraph;
 pub mod symbol_graph;
 pub mod topological;
+pub mod topological_x;
