@@ -12,6 +12,7 @@ pub mod directed_cycle;
 pub mod directed_dfs;
 pub mod graph;
 pub mod graph_generator;
+pub mod kosaraju_scc;
 pub mod naive_scc;
 pub mod symbol_digraph;
 pub mod symbol_graph;
