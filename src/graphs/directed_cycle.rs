@@ -60,7 +60,6 @@ impl DirectedCycle {
     /// Returns a directed cycle if the digraph has a directed cycle.
     /// Note the result relies on adj orders.
     pub fn cycle(&self) -> Iter {
-        // let c = self.cycle.clone();
         Iter::new(self)
     }
 }

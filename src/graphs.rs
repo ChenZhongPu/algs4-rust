@@ -13,3 +13,4 @@ pub mod directed_dfs;
 pub mod graph;
 pub mod graph_generator;
 pub mod symbol_graph;
+pub mod topological;
