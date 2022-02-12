@@ -7,6 +7,7 @@ pub mod dfs;
 pub mod dfs_directed_paths;
 pub mod dfs_paths;
 pub mod digraph;
+pub mod directed_cycle;
 pub mod directed_dfs;
 pub mod graph;
 pub mod graph_generator;
