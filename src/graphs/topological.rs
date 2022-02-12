@@ -2,6 +2,8 @@
 //!
 //! A digraph has a topological order if and only if it is a DAG.
 //! This implementation uses depth-first search.
+//!
+//! Reverse postorder in a DAG is a topological sort.
 
 use super::{dfs_order::DepthFirstOrder, digraph::Digraph, directed_cycle::DirectedCycle};
 pub struct Topological {
@@ -47,6 +49,8 @@ impl Topological {
 
 #[cfg(test)]
 mod test {
+    use crate::graphs::symbol_digraph::SymbolDigraph;
+
     use super::*;
 
     #[test]
@@ -73,6 +77,45 @@ mod test {
         assert_eq!(
             topological.order().collect::<Vec<usize>>(),
             vec![8, 7, 2, 3, 0, 5, 1, 6, 9, 10, 11, 12, 4]
+        );
+    }
+
+    #[test]
+    fn jobs() {
+        let data = vec![
+            "Algorithms/Theoretical CS/Databases/Scientific Computing",
+            "Introduction to CS/Advanced Programming/Algorithms",
+            "Advanced Programming/Scientific Computing",
+            "Scientific Computing/Computational Biology",
+            "Theoretical CS/Computational Biology/Artificial Intelligence",
+            "Linear Algebra/Theoretical CS",
+            "Calculus/Linear Algebra",
+            "Artificial Intelligence/Neural Networks/Robotics/Machine Learning",
+            "Machine Learning/Neural Networks",
+        ];
+
+        let sg = SymbolDigraph::new(data, "/");
+        let topological = Topological::new(sg.digraph());
+
+        assert_eq!(topological.has_order(), true);
+        let order: Vec<&str> = topological.order().map(|v| sg.name_of(v)).collect();
+        assert_eq!(
+            order,
+            vec![
+                "Calculus",
+                "Linear Algebra",
+                "Introduction to CS",
+                "Advanced Programming",
+                "Algorithms",
+                "Scientific Computing",
+                "Databases",
+                "Theoretical CS",
+                "Artificial Intelligence",
+                "Machine Learning",
+                "Robotics",
+                "Neural Networks",
+                "Computational Biology"
+            ]
         );
     }
 }
