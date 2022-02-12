@@ -7,7 +7,7 @@ pub struct DirectedCycle {
     marked: Vec<bool>,   // has vertex v been visited?
     on_stack: Vec<bool>, // is vertex on the stack?
     edge_to: Vec<usize>, // previous vertex on path to v
-    cycle: Vec<usize>,   // directed cycle (or empty if no such cycle)
+    cycle: Vec<usize>,   // stack: directed cycle (or empty if no such cycle)
 }
 
 impl DirectedCycle {
@@ -59,8 +59,29 @@ impl DirectedCycle {
 
     /// Returns a directed cycle if the digraph has a directed cycle.
     /// Note the result relies on adj orders.
-    pub fn cycle(&self) -> Vec<usize> {
-        self.cycle.clone()
+    pub fn cycle(&self) -> Iter {
+        // let c = self.cycle.clone();
+        Iter::new(self)
+    }
+}
+
+pub struct Iter {
+    stack: Vec<usize>,
+}
+
+impl Iter {
+    pub fn new(dc: &DirectedCycle) -> Self {
+        Iter {
+            stack: dc.cycle.clone(),
+        }
+    }
+}
+
+impl Iterator for Iter {
+    type Item = usize;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.stack.pop()
     }
 }
 
@@ -96,7 +117,7 @@ mod test {
 
         let dc = DirectedCycle::new(&digraph);
         assert_eq!(dc.has_cycle(), true);
-        assert_eq!(dc.cycle(), vec![3, 2, 3]);
+        assert_eq!(dc.cycle().collect::<Vec<usize>>(), vec![3, 2, 3]);
     }
 
     #[test]
@@ -120,6 +141,6 @@ mod test {
 
         let dc = DirectedCycle::new(&dag);
         assert_eq!(dc.has_cycle(), false);
-        assert_eq!(dc.cycle(), vec![]);
+        assert_eq!(dc.cycle().collect::<Vec<usize>>(), vec![]);
     }
 }
