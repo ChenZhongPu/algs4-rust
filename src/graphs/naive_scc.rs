@@ -72,6 +72,11 @@ impl NaiveSCC {
     pub fn id(&self, v: usize) -> usize {
         self.id[v]
     }
+
+    // Are v and w strongly connected?
+    pub fn strongly_connected(&self, v: usize, w: usize) -> bool {
+        self.id[v] == self.id[w]
+    }
 }
 
 #[cfg(test)]
@@ -108,14 +113,14 @@ mod test {
 
         assert_eq!(scc.count(), 5);
 
-        assert_eq!(scc.id(0), scc.id(2));
-        assert_eq!(scc.id(2), scc.id(3));
-        assert_eq!(scc.id(3), scc.id(4));
-        assert_eq!(scc.id(4), scc.id(5));
+        assert_eq!(scc.strongly_connected(0, 2), true);
+        assert_eq!(scc.strongly_connected(2, 3), true);
+        assert_eq!(scc.strongly_connected(3, 4), true);
+        assert_eq!(scc.strongly_connected(4, 5), true);
 
-        assert_ne!(scc.id(0), scc.id(1));
+        assert_eq!(scc.strongly_connected(0, 1), false);
 
-        assert_eq!(scc.id(7), scc.id(8));
-        assert_ne!(scc.id(0), scc.id(7));
+        assert_eq!(scc.strongly_connected(7, 8), true);
+        assert_eq!(scc.strongly_connected(0, 7), false);
     }
 }
