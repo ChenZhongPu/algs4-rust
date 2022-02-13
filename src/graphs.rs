@@ -10,6 +10,7 @@ pub mod dfs_paths;
 pub mod digraph;
 pub mod directed_cycle;
 pub mod directed_dfs;
+pub mod edge;
 pub mod graph;
 pub mod graph_generator;
 pub mod kosaraju_scc;
