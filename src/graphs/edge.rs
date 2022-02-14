@@ -50,6 +50,14 @@ impl PartialEq for Edge {
     }
 }
 
+impl Ord for Edge {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.partial_cmp(other).unwrap()
+    }
+}
+
+impl Eq for Edge {}
+
 impl std::fmt::Display for Edge {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}-{} {:.5}", self.v, self.w, self.weight)
