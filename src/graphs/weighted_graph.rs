@@ -1,5 +1,5 @@
 //! # An edge-weighted undirected graph
-//! 
+//!
 //! It is implemented using adjacency lists.
 
 use super::edge::Edge;
@@ -12,15 +12,19 @@ pub struct EdgeWeightedGraph {
 impl EdgeWeightedGraph {
     /// Initializes an empty edge-weighted graph with v vertices and 0 edges.
     pub fn new(v: usize) -> Self {
-        EdgeWeightedGraph { v, e: 0, adj: vec![vec![]; v] }
+        EdgeWeightedGraph {
+            v,
+            e: 0,
+            adj: vec![vec![]; v],
+        }
     }
     /// Adds the undirected edge to this edge-weighted graph.
     pub fn add_edge(&mut self, e: Edge) {
         let v = e.either();
         let w = e.other(v);
         self.adj[v].push(e.clone());
-        self.adj[w].push(e.clone());
-        self.e +=1 ;
+        self.adj[w].push(e);
+        self.e += 1;
     }
 
     /// Returns the number of vertices in this edge-weighted graph.
@@ -38,22 +42,24 @@ impl EdgeWeightedGraph {
         self.adj[v].clone().into_iter()
     }
 
-
     /// Returns all edges in this graph.
     pub fn edges(&self) -> std::vec::IntoIter<Edge> {
         let mut list = Vec::new();
         for v in 0..self.v {
             let mut self_loops = 0;
             for e in self.adj(v) {
-                if e.other(v) > v {
-                    list.push(e.clone());
-                }
-                // add only one copy of each self-loop
-                else if e.other(v) == v {
-                    if self_loops % 2 == 0 {
-                        list.push(e.clone());
+                match e.other(v).cmp(&v) {
+                    std::cmp::Ordering::Less => {}
+                    std::cmp::Ordering::Equal => {
+                        // add only one copy of each self-loop
+                        if self_loops % 2 == 0 {
+                            list.push(e);
+                        }
+                        self_loops += 1;
                     }
-                    self_loops += 1;
+                    std::cmp::Ordering::Greater => {
+                        list.push(e);
+                    }
                 }
             }
         }
