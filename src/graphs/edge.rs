@@ -4,6 +4,7 @@
 //! and a real-value weight.
 //!
 //! Compares two edges by weight.
+#[derive(Debug, Clone)]
 pub struct Edge {
     v: usize,
     w: usize,
@@ -51,7 +52,7 @@ impl PartialEq for Edge {
 
 impl std::fmt::Display for Edge {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "{}-{} {:.5}", self.v, self.w, self.weight)
+        write!(f, "{}-{} {:.5}", self.v, self.w, self.weight)
     }
 }
 
@@ -67,8 +68,10 @@ mod test {
 
         let edge2 = Edge::new(10, 11, 5.67);
         assert_eq!(edge.partial_cmp(&edge2), Some(Ordering::Equal));
+        assert_eq!(edge, edge2);
 
         let edge3 = Edge::new(10, 11, 8.0);
         assert_eq!(edge.partial_cmp(&edge3), Some(Ordering::Less));
+        assert!(edge < edge3);
     }
 }
