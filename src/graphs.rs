@@ -14,6 +14,7 @@ pub mod edge;
 pub mod graph;
 pub mod graph_generator;
 pub mod kosaraju_scc;
+pub mod kruskal_mst;
 pub mod lazy_prim_mst;
 pub mod naive_scc;
 pub mod symbol_digraph;
