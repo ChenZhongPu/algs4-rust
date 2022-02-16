@@ -1,3 +1,4 @@
+pub mod acyclic_sp;
 pub mod bfs_directed_paths;
 pub mod bfs_paths;
 pub mod bipartite;
@@ -25,4 +26,5 @@ pub mod symbol_graph;
 pub mod topological;
 pub mod topological_x;
 pub mod weighted_digraph;
+pub mod weighted_directed_cycle;
 pub mod weighted_graph;

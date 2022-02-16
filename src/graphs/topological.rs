@@ -5,7 +5,10 @@
 //!
 //! Reverse postorder in a DAG is a topological sort.
 
-use super::{dfs_order::DepthFirstOrder, digraph::Digraph, directed_cycle::DirectedCycle};
+use super::{
+    dfs_order::DepthFirstOrder, digraph::Digraph, directed_cycle::DirectedCycle,
+    weighted_digraph::EdgeWeightedDiagraph, weighted_directed_cycle::EdgeWeightedDirectedCycle,
+};
 pub struct Topological {
     order: Vec<usize>, // topological order
     rank: Vec<usize>,  // rank[v] = rank of v in order
@@ -24,6 +27,22 @@ impl Topological {
                 rank[*v] = i;
             }
         }
+        Topological { order, rank }
+    }
+
+    pub fn from_weighted_diagraph(g: &EdgeWeightedDiagraph) -> Self {
+        let finder = EdgeWeightedDirectedCycle::new(g);
+        let mut order = vec![];
+        let mut rank = vec![];
+        if !finder.has_cycle() {
+            let dfs = DepthFirstOrder::from_weighted_diagraph(g);
+            order = dfs.rev_post().collect::<Vec<usize>>();
+            rank = vec![0; g.v()];
+            for (i, v) in order.iter().enumerate() {
+                rank[*v] = i;
+            }
+        }
+
         Topological { order, rank }
     }
 

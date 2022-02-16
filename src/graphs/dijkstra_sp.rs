@@ -67,7 +67,7 @@ impl DijkstraSP {
         }
 
         let mut vertex = v;
-        while let Some(edge) = self.edge_to[vertex].clone() {
+        while let Some(edge) = self.edge_to[vertex] {
             vertex = edge.from();
             path.push(edge);
         }

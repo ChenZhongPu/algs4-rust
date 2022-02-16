@@ -3,7 +3,7 @@
 //! This implementation uses depth-first search.
 //! Note the results rely on the order of adj.
 
-use super::digraph::Digraph;
+use super::{digraph::Digraph, weighted_digraph::EdgeWeightedDiagraph};
 pub struct DepthFirstOrder {
     marked: Vec<bool>,
     // since only `enqueue` is required, we can use Vec
@@ -29,12 +29,39 @@ impl DepthFirstOrder {
         dfs_order
     }
 
+    pub fn from_weighted_diagraph(g: &EdgeWeightedDiagraph) -> Self {
+        let mut dfs_order = DepthFirstOrder {
+            marked: vec![false; g.v()],
+            pre: vec![],
+            post: vec![],
+        };
+        for v in 0..g.v() {
+            if !dfs_order.marked[v] {
+                dfs_order.dfs_weighted_digraph(g, v);
+            }
+        }
+
+        dfs_order
+    }
+
     fn dfs(&mut self, g: &Digraph, v: usize) {
         self.pre.push(v);
         self.marked[v] = true;
         for w in g.adj(v).clone() {
             if !self.marked[w] {
                 self.dfs(g, w);
+            }
+        }
+        self.post.push(v);
+    }
+
+    fn dfs_weighted_digraph(&mut self, g: &EdgeWeightedDiagraph, v: usize) {
+        self.pre.push(v);
+        self.marked[v] = true;
+        for e in g.adj(v) {
+            let w = e.to();
+            if !self.marked[w] {
+                self.dfs_weighted_digraph(g, w);
             }
         }
         self.post.push(v);
