@@ -2,7 +2,7 @@
 //!
 //! Each edge consists of two integers (naming the two vertices) and a
 //! real-value weight.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct DirectedEdge {
     v: usize,
     w: usize,

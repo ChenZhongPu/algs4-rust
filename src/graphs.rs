@@ -24,3 +24,4 @@ pub mod topological;
 pub mod topological_x;
 pub mod weighted_digraph;
 pub mod weighted_graph;
+pub mod dijkstra_sp;

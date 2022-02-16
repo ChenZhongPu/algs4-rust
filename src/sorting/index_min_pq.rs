@@ -95,6 +95,30 @@ impl<T: Default + Copy + PartialOrd> IndexMinPQ<T> {
         self.sink(self.inverse_pq[i]);
     }
 
+    /// Decrease the key associated with index i to the specified value
+    pub fn decrease_key(&mut self, i: usize, key: T) {
+        if !self.contains(i) {
+            panic!("no such element");
+        }
+        if self.keys[i] <= key {
+            panic!("Calling decrease_key() with a key >= current key");
+        }
+        self.keys[i] = key;
+        self.swim(self.inverse_pq[i]);
+    }
+
+    /// Increase the key associated with index i to the specified value 
+    pub fn increase_key(&mut self, i: usize, key: T) {
+        if !self.contains(i) {
+            panic!("no such element");
+        }
+        if self.keys[i] >= key {
+            panic!("Calling increase() with a key <= current key");
+        }
+        self.keys[i] = key;
+        self.sink(self.inverse_pq[i]);
+    }
+
     fn greater(&self, i: usize, j: usize) -> bool {
         self.keys[self.pq[i]] > self.keys[self.pq[j]]
     }
