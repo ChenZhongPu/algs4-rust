@@ -107,7 +107,7 @@ impl<T: Default + Copy + PartialOrd> IndexMinPQ<T> {
         self.swim(self.inverse_pq[i]);
     }
 
-    /// Increase the key associated with index i to the specified value 
+    /// Increase the key associated with index i to the specified value
     pub fn increase_key(&mut self, i: usize, key: T) {
         if !self.contains(i) {
             panic!("no such element");

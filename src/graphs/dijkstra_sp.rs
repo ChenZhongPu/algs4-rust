@@ -1,6 +1,6 @@
 //! # The single source shortest paths problem in edge-weighted digraphs
 //! where the edge weights are non-negative.
-//! 
+//!
 //! This implementation uses Dijkstra's algorithm with a binary heap.
 //! The time complexity is O(E log(V))
 
@@ -10,13 +10,12 @@ use crate::sorting::index_min_pq::IndexMinPQ;
 
 use super::{directed_edge::DirectedEdge, weighted_digraph::EdgeWeightedDiagraph};
 pub struct DijkstraSP {
-    dist_to: Vec<f64>, // dist_to[v] = distance of shortest s->v path
+    dist_to: Vec<f64>,                  // dist_to[v] = distance of shortest s->v path
     edge_to: Vec<Option<DirectedEdge>>, // edge_to[v] = last edge on shortest s->v path
-    pq: IndexMinPQ<f64>, // min priority queue of vertices
+    pq: IndexMinPQ<f64>,                // min priority queue of vertices
 }
 
 impl DijkstraSP {
-
     pub fn new(g: &EdgeWeightedDiagraph, s: usize) -> Self {
         let mut sp = DijkstraSP {
             dist_to: vec![f64::MAX; g.v()],
@@ -64,7 +63,7 @@ impl DijkstraSP {
     pub fn path_to(&self, v: usize) -> std::vec::IntoIter<DirectedEdge> {
         let mut path = Vec::new();
         if !self.has_path_to(v) {
-           return path.into_iter();
+            return path.into_iter();
         }
 
         let mut vertex = v;
