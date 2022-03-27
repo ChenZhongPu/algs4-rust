@@ -1,5 +1,4 @@
 const UNICODE_SIZE: usize = 65536;
-
 /// A data type for alphabets, for use with string-processing code.
 /// `u16`, whose max is 65535, is big enough.
 pub struct Alphabet {
@@ -10,7 +9,7 @@ pub struct Alphabet {
 
 impl Alphabet {
     /// Initializes a new alphabet from the given set of characters.
-    pub fn new(alpha: String) -> Self {
+    pub fn new(alpha: &str) -> Self {
         let mut unicode = vec![false; UNICODE_SIZE];
         for c in alpha.chars() {
             if unicode[c as usize] {
@@ -77,13 +76,39 @@ impl Alphabet {
     }
 }
 
+impl Alphabet {
+    pub fn from_binary() -> Self {
+        Alphabet::new("01")
+    }
+
+    pub fn from_octal() -> Self {
+        Alphabet::new("01234567")
+    }
+
+    pub fn from_decimal() -> Self {
+        Alphabet::new("0123456789")
+    }
+
+    pub fn from_hex() -> Self {
+        Alphabet::new("0123456789ABCDEF")
+    }
+
+    pub fn from_lowercase() -> Self {
+        Alphabet::new("abcdefghijklmnopqrstuvwxyz")
+    }
+
+    pub fn from_uppercase() -> Self {
+        Alphabet::new("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
     #[test]
     fn abar() {
-        let alphabet = Alphabet::new(String::from("ABCDR"));
+        let alphabet = Alphabet::new("ABCDR");
 
         assert_eq!(alphabet.contains('A'), true);
         assert_eq!(alphabet.contains('a'), false);
