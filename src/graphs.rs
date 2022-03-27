@@ -20,6 +20,7 @@ pub mod graph_generator;
 pub mod kosaraju_scc;
 pub mod kruskal_mst;
 pub mod lazy_prim_mst;
+pub mod naive_bellman_ford_sp;
 pub mod naive_scc;
 pub mod symbol_digraph;
 pub mod symbol_graph;
