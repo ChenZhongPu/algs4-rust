@@ -27,6 +27,15 @@ impl Alphabet {
 
         Alphabet { alphabet, inverse, r }
     }
+    
+    // Initializes a new alphabet using characters 0 through R-1
+    fn from_radix(radix: u16) -> Self {
+        let r = radix;
+        let alphabet: Vec<char> = (0..radix).map(|i| std::char::from_u32(i as u32).expect("Not a valid char")).collect();
+        let inverse: Vec<Option<u16>> = (0..radix).map(|i| Some(i)).collect();
+
+        Alphabet { alphabet, inverse, r }
+    }
 
     /// Returns the number of characters in this alphabet (the radix).
     pub fn radix(&self) -> u16 {
@@ -76,6 +85,13 @@ impl Alphabet {
     }
 }
 
+/// Initializes a new alphabet using characters 0 through 255.
+impl Default for Alphabet {
+    fn default() -> Self {
+        Self::from_radix(256)
+    }
+}
+
 impl Alphabet {
     pub fn from_binary() -> Self {
         Alphabet::new("01")
@@ -118,5 +134,11 @@ mod test {
 
         assert_eq!(alphabet.to_indices("AABB"), vec![0, 0, 1, 1]);
         assert_eq!(alphabet.to_chars(vec![2, 3]), vec!['C', 'D']);
+    }
+
+    #[test]
+    fn default() {
+        let alphabet = Alphabet::default();
+        assert_eq!(alphabet.radix(), 256);
     }
 }
