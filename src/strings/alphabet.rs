@@ -2,9 +2,9 @@ const UNICODE_SIZE: usize = 65536;
 /// A data type for alphabets, for use with string-processing code.
 /// `u16`, whose max is 65535, is big enough.
 pub struct Alphabet {
-    alphabet: Vec<char>, // the characters in the alphabet
+    alphabet: Vec<char>,       // the characters in the alphabet
     inverse: Vec<Option<u16>>, // indices: `index` is `char`
-    r: u16, // the radix of the alphabet
+    r: u16,                    // the radix of the alphabet
 }
 
 impl Alphabet {
@@ -20,21 +20,31 @@ impl Alphabet {
         let alphabet: Vec<char> = alpha.chars().collect();
         let r = alphabet.len() as u16;
         let mut inverse: Vec<Option<u16>> = vec![None; UNICODE_SIZE];
-        
+
         for c in 0..r {
             inverse[alphabet[c as usize] as usize] = Some(c);
         }
 
-        Alphabet { alphabet, inverse, r }
+        Alphabet {
+            alphabet,
+            inverse,
+            r,
+        }
     }
-    
+
     // Initializes a new alphabet using characters 0 through R-1
     fn from_radix(radix: u16) -> Self {
         let r = radix;
-        let alphabet: Vec<char> = (0..radix).map(|i| std::char::from_u32(i as u32).expect("Not a valid char")).collect();
-        let inverse: Vec<Option<u16>> = (0..radix).map(|i| Some(i)).collect();
+        let alphabet: Vec<char> = (0..radix)
+            .map(|i| std::char::from_u32(i as u32).expect("Not a valid char"))
+            .collect();
+        let inverse: Vec<Option<u16>> = (0..radix).map(Some).collect();
 
-        Alphabet { alphabet, inverse, r }
+        Alphabet {
+            alphabet,
+            inverse,
+            r,
+        }
     }
 
     /// Returns the number of characters in this alphabet (the radix).
@@ -65,7 +75,7 @@ impl Alphabet {
             None => panic!("Character {} not in alphabet", c),
         }
     }
-    
+
     /// Returns the indices corresponding to the argument characters.
     pub fn to_indices(&self, s: &str) -> Vec<u16> {
         s.chars().map(|c| self.to_index(c)).collect()
