@@ -32,6 +32,21 @@ impl<K, V> Node<K, V> {
         }
     }
 
+    fn balance_factor_link(node: &Link<K, V>) -> i8 {
+        match node {
+           Some(n) => {
+               let left_h = Node::height(&n.left);
+               let right_h = Node::height(&n.right);
+               if left_h >= right_h {
+                   (left_h - right_h) as i8
+               } else {
+                   -((right_h - left_h) as i8)
+               }
+           },
+           None => 0,
+        }
+    }
+
     pub fn left_height(&self) -> usize {
         Node::height(&self.left)
     }
@@ -74,16 +89,10 @@ impl<K: Ord, V> Node<K, V> {
     fn rotate_right(mut self) -> Box<Node<K, V>> {
         match self.left {
             Some(mut x) => {
-                let t1_h = Node::height(&x.left);
-                let t2_h = Node::height(&x.right);
-                let t3_h = Node::height(&self.right);
-                let y_h = t2_h.max(t3_h) + 1;
-                let x_h = t1_h.max(y_h) + 1;
-
                 self.left = x.right.take();
-                self.height = y_h;
+                self.update_height();
                 x.right = Some(Box::new(self));
-                x.height = x_h;
+                x.update_height();
                 x
             }
             _ => Box::new(self),
@@ -93,33 +102,69 @@ impl<K: Ord, V> Node<K, V> {
     fn rotate_left(mut self) -> Box<Node<K, V>> {
         match self.right {
             Some(mut y) => {
-                let t1_h = Node::height(&self.left);
-                let t2_h = Node::height(&y.left);
-                let t3_h = Node::height(&y.right);
-                let x_h = t1_h.max(t2_h) + 1;
-                let y_h = x_h.max(t3_h) + 1;
-
                 self.right = y.left.take();
-                self.height = x_h;
+                self.update_height();
                 y.left = Some(Box::new(self));
-                y.height = y_h;
+                y.update_height();
                 y
             }
             None => Box::new(self),
         }
     }
 
-    pub fn rebalance(mut self) -> bool {
+// case 1: -2 (right right case)
+//   z                                y
+//  /  \                            /   \ 
+// T1   y     Left Rotate(z)       z      x
+//     /  \   - - - - - - - ->    / \    / \
+//    T2   x                     T1  T2 T3  T4
+//        / \
+//      T3  T4    
+
+// case 2: -2 (right left case)
+//  z                            z                            x
+// / \                          / \                          /  \ 
+// T1  y   Right Rotate (y)    T1  x      Left Rotate(z)   z      y
+//   / \  - - - - - - - - ->     /  \   - - - - - - - ->  / \    / \
+//  x   T4                      T2   y                  T1  T2  T3  T4
+// / \                              /  \
+// T2   T3                           T3   T4
+
+// case 3: 2 (left left case)
+//  z                                      y 
+// / \                                   /   \
+// y   T4      Right Rotate (z)          x      z
+// / \          - - - - - - - - ->      /  \    /  \ 
+// x   T3                               T1  T2  T3  T4
+// / \
+// T1   T2
+// case 4: 2 (left right case)
+//      z                               z                           x
+//     / \                            /   \                        /  \ 
+//     y   T4  Left Rotate (y)        x    T4  Right Rotate(z)    y      z
+//     / \      - - - - - - - - ->    /  \      - - - - - - - ->  / \    / \
+//     T1   x                          y    T3                   T1  T2 T3  T4
+//     / \                            / \
+//    T2   T3                      T1   T2
+    pub fn re_balance(mut self) -> Box<Node<K, V>> {
         match self.balance_factor() {
             -2 => {
-                let right_node = self.right.as_mut().unwrap();
-                if right_node.balance_factor() == 1 {
-                    // self.right = Some(right_node.rotate_right());
+                // it must has a `right`
+                if Node::balance_factor_link(&self.right) == 1 {
+                    let y = self.right.take().unwrap();
+                    self.right = Some(y.rotate_right());
                 }
-                true
+               self.rotate_left() 
             }
-            2 => true,
-            _ => false,
+            2 => {
+                // it must has a `left`
+                if Node::balance_factor_link(&self.left) == -1 {
+                    let y = self.left.take().unwrap();
+                    self.left = Some(y.rotate_left());
+                }
+                self.rotate_right()
+            },
+            _ => Box::new(self),
         }
     }
 }
@@ -127,15 +172,21 @@ pub struct AVL<K, V> {
     root: Link<K, V>, // root of AVL
 }
 
-impl<K: Ord + Clone, V> AVL<K, V> {
+impl<K: Ord, V> AVL<K, V> {
     pub fn new() -> Self {
         AVL { root: None }
+    }
+
+    pub fn put(&mut self, k: K, v: V) {
+        let new_node = Box::new(Node::new(k, v));
+        self.root = AVL::_put(new_node, self.root.take());
+
+        self.check();
     }
 
     fn _put(new_node: Box<Node<K, V>>, current: Link<K, V>) -> Link<K, V> {
         match current {
             Some(mut node) => {
-                let key = new_node.key.clone();
                 // 1. Perform normal BST insertion
                 match new_node.key.cmp(&node.key) {
                     std::cmp::Ordering::Less => node.left = Self::_put(new_node, node.left),
@@ -143,12 +194,115 @@ impl<K: Ord + Clone, V> AVL<K, V> {
                     std::cmp::Ordering::Greater => node.right = Self::_put(new_node, node.right),
                 }
                 // 2. Update height
-
+                node.update_height();
                 // 3. Re-balance if needed
-
+                node = Node::re_balance(*node);
                 Some(node)
             }
             None => Some(new_node),
         }
+    }
+
+    pub fn get(&self, k: &K) -> Option<&V> {
+        Self::_get(&self.root, k)
+    }
+
+    fn _get<'a, 'b>(x: &'a Link<K, V>, k: &'b K) -> Option<&'a V> {
+        match x {
+            Some(node) => match k.cmp(&node.key) {
+                std::cmp::Ordering::Less => Self::_get(&node.left, k),
+                std::cmp::Ordering::Equal => Some(&node.val),
+                std::cmp::Ordering::Greater => Self::_get(&node.right, k),
+            },
+            None => None,
+        }
+    }
+}
+
+impl<K: Ord, V> AVL<K, V> {
+    pub fn height(&self) -> usize {
+        Node::height(&self.root)
+    }
+}
+
+// Check integrity of AVL tree data structure.
+impl<K: Ord, V> AVL<K, V> {
+
+    fn check(&self) {
+        if !self.is_bst() {
+            panic!("Not in symmetric order");
+        }
+        if !self.is_balanced() {
+            panic!("Not balanced");
+        }
+    }
+
+    fn is_bst(&self) -> bool {
+        Self::_is_bst(&self.root, None, None)
+    }
+
+    fn _is_bst(x: &Link<K, V>, min: Option<&K>, max: Option<&K>) -> bool {
+        match x {
+           Some(node) => {
+               if let Some(min_key) = min {
+                   if node.key <= *min_key {
+                       return false;
+                   }
+               }
+               if let Some(max_key) = max {
+                   if node.key >= *max_key {
+                       return false;
+                   }
+               }
+               Self::_is_bst(&node.left, min, Some(&node.key))
+               && Self::_is_bst(&node.right, Some(&node.key), max)
+           },
+           _ => true,
+        }
+    }
+
+    fn is_balanced(&self) -> bool {
+        AVL::_is_balanced(&self.root)
+    }
+
+    fn _is_balanced(x: &Link<K, V>) -> bool {
+        match x {
+            Some(node) => {
+                if node.balance_factor().abs() > 1 {
+                    return false
+                }
+                AVL::_is_balanced(&node.left) && AVL::_is_balanced(&node.right)
+            },
+            None => {
+                true
+            }
+        }
+    }
+
+
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn get_put() {
+        let mut st = AVL::new();
+        st.put(1, String::from("one"));
+        st.put(5, String::from("five"));
+        st.put(3, String::from("three"));
+        st.put(2, String::from("two"));
+
+        assert_eq!(st.get(&5), Some(&String::from("five")));
+
+        st.put(6, String::from("six"));
+        st.put(7, String::from("seven"));
+        st.put(8, String::from("eight"));
+        st.put(9, String::from("nine"));
+
+        assert_eq!(st.get(&6), Some(&String::from("six")));
+
+        assert_eq!(st.height(), 4);
     }
 }
