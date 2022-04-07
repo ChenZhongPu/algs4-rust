@@ -113,14 +113,14 @@ mod test {
 
         assert_eq!(scc.count(), 5);
 
-        assert_eq!(scc.strongly_connected(0, 2), true);
-        assert_eq!(scc.strongly_connected(2, 3), true);
-        assert_eq!(scc.strongly_connected(3, 4), true);
-        assert_eq!(scc.strongly_connected(4, 5), true);
+        assert!(scc.strongly_connected(0, 2));
+        assert!(scc.strongly_connected(2, 3));
+        assert!(scc.strongly_connected(3, 4));
+        assert!(scc.strongly_connected(4, 5));
 
-        assert_eq!(scc.strongly_connected(0, 1), false);
+        assert!(!scc.strongly_connected(0, 1));
 
-        assert_eq!(scc.strongly_connected(7, 8), true);
-        assert_eq!(scc.strongly_connected(0, 7), false);
+        assert!(scc.strongly_connected(7, 8));
+        assert!(!scc.strongly_connected(0, 7));
     }
 }

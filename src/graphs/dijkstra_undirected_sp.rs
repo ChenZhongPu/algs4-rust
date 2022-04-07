@@ -100,17 +100,17 @@ mod test {
 
         let sp = DijkstraUndirectedSP::new(&g, 6);
 
-        assert!(sp.dist_to(0) - 0.58 < f64::EPSILON);
+        assert!((sp.dist_to(0) - 0.58).abs() < f64::EPSILON);
         sp.path_to(0).for_each(|e| print!("{};", e));
         println!();
 
-        assert!(sp.dist_to(1) - 0.76 < f64::EPSILON);
+        assert!((sp.dist_to(1) - 0.76).abs() < f64::EPSILON);
         sp.path_to(1).for_each(|e| print!("{};", e));
         println!();
 
-        assert!(sp.dist_to(2) - 0.40 < f64::EPSILON);
-        assert!(sp.dist_to(5) - 1.02 < f64::EPSILON);
-        assert!(sp.dist_to(6) - 0.0 < f64::EPSILON);
-        assert!(sp.dist_to(7) - 0.74 < f64::EPSILON);
+        assert!((sp.dist_to(2) - 0.40).abs() < f64::EPSILON);
+        assert!((sp.dist_to(5) - 1.02).abs() < f64::EPSILON);
+        assert!((sp.dist_to(6) - 0.0).abs() < f64::EPSILON);
+        assert!((sp.dist_to(7) - 0.74).abs() < f64::EPSILON);
     }
 }

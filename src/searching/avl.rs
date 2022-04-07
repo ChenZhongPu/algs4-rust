@@ -34,16 +34,16 @@ impl<K, V> Node<K, V> {
 
     fn balance_factor_link(node: &Link<K, V>) -> i8 {
         match node {
-           Some(n) => {
-               let left_h = Node::height(&n.left);
-               let right_h = Node::height(&n.right);
-               if left_h >= right_h {
-                   (left_h - right_h) as i8
-               } else {
-                   -((right_h - left_h) as i8)
-               }
-           },
-           None => 0,
+            Some(n) => {
+                let left_h = Node::height(&n.left);
+                let right_h = Node::height(&n.right);
+                if left_h >= right_h {
+                    (left_h - right_h) as i8
+                } else {
+                    -((right_h - left_h) as i8)
+                }
+            }
+            None => 0,
         }
     }
 
@@ -112,40 +112,40 @@ impl<K: Ord, V> Node<K, V> {
         }
     }
 
-// case 1: -2 (right right case)
-//   z                                y
-//  /  \                            /   \ 
-// T1   y     Left Rotate(z)       z      x
-//     /  \   - - - - - - - ->    / \    / \
-//    T2   x                     T1  T2 T3  T4
-//        / \
-//      T3  T4    
+    // case 1: -2 (right right case)
+    //   z                                y
+    //  /  \                            /   \
+    // T1   y     Left Rotate(z)       z      x
+    //     /  \   - - - - - - - ->    / \    / \
+    //    T2   x                     T1  T2 T3  T4
+    //        / \
+    //      T3  T4
 
-// case 2: -2 (right left case)
-//  z                            z                            x
-// / \                          / \                          /  \ 
-// T1  y   Right Rotate (y)    T1  x      Left Rotate(z)   z      y
-//   / \  - - - - - - - - ->     /  \   - - - - - - - ->  / \    / \
-//  x   T4                      T2   y                  T1  T2  T3  T4
-// / \                              /  \
-// T2   T3                           T3   T4
+    // case 2: -2 (right left case)
+    //  z                            z                            x
+    // / \                          / \                          /  \
+    // T1  y   Right Rotate (y)    T1  x      Left Rotate(z)   z      y
+    //   / \  - - - - - - - - ->     /  \   - - - - - - - ->  / \    / \
+    //  x   T4                      T2   y                  T1  T2  T3  T4
+    // / \                              /  \
+    // T2   T3                           T3   T4
 
-// case 3: 2 (left left case)
-//  z                                      y 
-// / \                                   /   \
-// y   T4      Right Rotate (z)          x      z
-// / \          - - - - - - - - ->      /  \    /  \ 
-// x   T3                               T1  T2  T3  T4
-// / \
-// T1   T2
-// case 4: 2 (left right case)
-//      z                               z                           x
-//     / \                            /   \                        /  \ 
-//     y   T4  Left Rotate (y)        x    T4  Right Rotate(z)    y      z
-//     / \      - - - - - - - - ->    /  \      - - - - - - - ->  / \    / \
-//     T1   x                          y    T3                   T1  T2 T3  T4
-//     / \                            / \
-//    T2   T3                      T1   T2
+    // case 3: 2 (left left case)
+    //  z                                      y
+    // / \                                   /   \
+    // y   T4      Right Rotate (z)          x      z
+    // / \          - - - - - - - - ->      /  \    /  \
+    // x   T3                               T1  T2  T3  T4
+    // / \
+    // T1   T2
+    // case 4: 2 (left right case)
+    //      z                               z                           x
+    //     / \                            /   \                        /  \
+    //     y   T4  Left Rotate (y)        x    T4  Right Rotate(z)    y      z
+    //     / \      - - - - - - - - ->    /  \      - - - - - - - ->  / \    / \
+    //     T1   x                          y    T3                   T1  T2 T3  T4
+    //     / \                            / \
+    //    T2   T3                      T1   T2
     pub fn re_balance(mut self) -> Box<Node<K, V>> {
         match self.balance_factor() {
             -2 => {
@@ -154,7 +154,7 @@ impl<K: Ord, V> Node<K, V> {
                     let y = self.right.take().unwrap();
                     self.right = Some(y.rotate_right());
                 }
-               self.rotate_left() 
+                self.rotate_left()
             }
             2 => {
                 // it must has a `left`
@@ -163,7 +163,7 @@ impl<K: Ord, V> Node<K, V> {
                     self.left = Some(y.rotate_left());
                 }
                 self.rotate_right()
-            },
+            }
             _ => Box::new(self),
         }
     }
@@ -227,7 +227,6 @@ impl<K: Ord, V> AVL<K, V> {
 
 // Check integrity of AVL tree data structure.
 impl<K: Ord, V> AVL<K, V> {
-
     fn check(&self) {
         if !self.is_bst() {
             panic!("Not in symmetric order");
@@ -243,21 +242,21 @@ impl<K: Ord, V> AVL<K, V> {
 
     fn _is_bst(x: &Link<K, V>, min: Option<&K>, max: Option<&K>) -> bool {
         match x {
-           Some(node) => {
-               if let Some(min_key) = min {
-                   if node.key <= *min_key {
-                       return false;
-                   }
-               }
-               if let Some(max_key) = max {
-                   if node.key >= *max_key {
-                       return false;
-                   }
-               }
-               Self::_is_bst(&node.left, min, Some(&node.key))
-               && Self::_is_bst(&node.right, Some(&node.key), max)
-           },
-           _ => true,
+            Some(node) => {
+                if let Some(min_key) = min {
+                    if node.key <= *min_key {
+                        return false;
+                    }
+                }
+                if let Some(max_key) = max {
+                    if node.key >= *max_key {
+                        return false;
+                    }
+                }
+                Self::_is_bst(&node.left, min, Some(&node.key))
+                    && Self::_is_bst(&node.right, Some(&node.key), max)
+            }
+            _ => true,
         }
     }
 
@@ -269,17 +268,19 @@ impl<K: Ord, V> AVL<K, V> {
         match x {
             Some(node) => {
                 if node.balance_factor().abs() > 1 {
-                    return false
+                    return false;
                 }
                 AVL::_is_balanced(&node.left) && AVL::_is_balanced(&node.right)
-            },
-            None => {
-                true
             }
+            None => true,
         }
     }
+}
 
-
+impl<K: Ord, V> Default for AVL<K, V> {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 #[cfg(test)]

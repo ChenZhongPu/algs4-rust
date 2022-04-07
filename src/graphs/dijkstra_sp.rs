@@ -102,16 +102,16 @@ mod test {
 
         let sp = DijkstraSP::new(&g, 0);
 
-        assert_eq!(sp.dist_to(0), 0.0);
+        assert!((sp.dist_to(0) - 0.0).abs() < f64::EPSILON);
 
-        assert_eq!(sp.dist_to(1), 1.05);
+        assert!((sp.dist_to(1) - 1.05).abs() < f64::EPSILON);
         sp.path_to(1).for_each(|x| print!("{};", x));
         println!();
 
-        assert_eq!(sp.dist_to(2), 0.26);
-        assert!((sp.dist_to(3) - 0.99) < f64::EPSILON);
+        assert!((sp.dist_to(2) - 0.26).abs() < f64::EPSILON);
+        assert!((sp.dist_to(3) - 0.99).abs() < f64::EPSILON);
 
-        assert!((sp.dist_to(4) - 0.38) < f64::EPSILON);
-        assert!((sp.dist_to(5) - 0.73) < f64::EPSILON);
+        assert!((sp.dist_to(4) - 0.38).abs() < f64::EPSILON);
+        assert!((sp.dist_to(5) - 0.73).abs() < f64::EPSILON);
     }
 }

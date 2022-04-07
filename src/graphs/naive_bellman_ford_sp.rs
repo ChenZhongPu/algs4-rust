@@ -74,9 +74,9 @@ mod test {
         assert_eq!(sp.dist_to(0), 0.0);
         assert_eq!(sp.dist_to(1), 1.05);
         assert_eq!(sp.dist_to(2), 0.26);
-        assert!((sp.dist_to(3) - 0.99) < f64::EPSILON);
+        assert!((sp.dist_to(3) - 0.99).abs() < f64::EPSILON);
 
-        assert!((sp.dist_to(4) - 0.38) < f64::EPSILON);
-        assert!((sp.dist_to(5) - 0.73) < f64::EPSILON);
+        assert!((sp.dist_to(4) - 0.38).abs() < f64::EPSILON);
+        assert!((sp.dist_to(5) - 0.73).abs() < f64::EPSILON);
     }
 }

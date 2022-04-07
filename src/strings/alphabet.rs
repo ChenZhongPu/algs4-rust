@@ -136,8 +136,8 @@ mod test {
     fn abar() {
         let alphabet = Alphabet::new("ABCDR");
 
-        assert_eq!(alphabet.contains('A'), true);
-        assert_eq!(alphabet.contains('a'), false);
+        assert!(alphabet.contains('A'));
+        assert!(!alphabet.contains('a'));
 
         assert_eq!(alphabet.to_char(0), 'A');
         assert_eq!(alphabet.to_index('B'), 1);

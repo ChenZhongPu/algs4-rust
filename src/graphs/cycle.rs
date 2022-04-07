@@ -62,7 +62,7 @@ mod test {
         graph.add_edge(5, 3);
 
         let cycle = Cycle::new(&graph);
-        assert_eq!(cycle.has_cycle(), true);
+        assert!(cycle.has_cycle());
     }
 
     #[test]
@@ -75,6 +75,6 @@ mod test {
         graph.add_edge(2, 4);
 
         let cycle = Cycle::new(&graph);
-        assert_eq!(cycle.has_cycle(), false);
+        assert!(!cycle.has_cycle());
     }
 }

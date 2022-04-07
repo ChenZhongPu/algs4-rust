@@ -85,7 +85,7 @@ mod test {
         dag.add_edge(7, 6);
 
         let topological = TopologicalX::new(&dag);
-        assert_eq!(topological.has_order(), true);
+        assert!(topological.has_order());
         assert_eq!(
             topological.order().collect::<Vec<usize>>(),
             vec![2, 8, 3, 0, 7, 1, 5, 6, 4, 9, 11, 10, 12]
@@ -119,6 +119,6 @@ mod test {
         digraph.add_edge(7, 6);
 
         let topological = TopologicalX::new(&digraph);
-        assert_eq!(topological.has_order(), false);
+        assert!(!topological.has_order());
     }
 }

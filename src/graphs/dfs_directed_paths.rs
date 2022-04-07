@@ -100,12 +100,12 @@ mod test {
         digraph.add_edge(7, 6);
 
         let search = DepthFirstDirectedPaths::new(&digraph, 3);
-        assert_eq!(search.has_path_to(0), true);
+        assert!(search.has_path_to(0));
         assert_eq!(search.path_to(0).collect::<Vec<usize>>(), vec![3, 2, 0]);
 
         assert_eq!(search.path_to(1).collect::<Vec<usize>>(), vec![3, 2, 0, 1]);
 
-        assert_eq!(search.has_path_to(6), false);
+        assert!(!search.has_path_to(6));
         assert_eq!(search.path_to(6).collect::<Vec<usize>>(), vec![]);
     }
 }

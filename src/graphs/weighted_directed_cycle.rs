@@ -91,8 +91,6 @@ mod test {
         let dc = EdgeWeightedDirectedCycle::new(&g);
 
         assert!(dc.has_cycle());
-
-        dc.cycle().for_each(|e| print!("{};", e));
     }
 
     #[test]
@@ -114,6 +112,6 @@ mod test {
 
         let dc = EdgeWeightedDirectedCycle::new(&g);
 
-        assert_eq!(dc.has_cycle(), false);
+        assert!(!dc.has_cycle());
     }
 }

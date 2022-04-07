@@ -92,10 +92,10 @@ mod test {
         g.add_edge(DirectedEdge::new(6, 4, 0.93));
 
         let sp = AcyclicSP::new(&g, 5);
-        assert!(sp.dist_to(0) - 0.73 < f64::EPSILON);
-        assert!(sp.dist_to(1) - 0.32 < f64::EPSILON);
-        assert!(sp.dist_to(2) - 0.62 < f64::EPSILON);
-        assert!(sp.dist_to(3) - 0.61 < f64::EPSILON);
-        assert!(sp.dist_to(4) - 0.35 < f64::EPSILON);
+        assert!((sp.dist_to(0) - 0.73).abs() < f64::EPSILON);
+        assert!((sp.dist_to(1) - 0.32).abs() < f64::EPSILON);
+        assert!((sp.dist_to(2) - 0.62).abs() < f64::EPSILON);
+        assert!((sp.dist_to(3) - 0.61).abs() < f64::EPSILON);
+        assert!((sp.dist_to(4) - 0.35).abs() < f64::EPSILON);
     }
 }

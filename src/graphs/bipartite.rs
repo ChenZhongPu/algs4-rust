@@ -64,7 +64,7 @@ mod test {
         graph.add_edge(0, 2);
 
         let bipartite = Bipartite::new(&graph);
-        assert_eq!(bipartite.is_bipartite(), false);
+        assert!(!bipartite.is_bipartite());
     }
 
     #[test]
@@ -77,7 +77,7 @@ mod test {
         graph.add_edge(2, 4);
 
         let bipartite = Bipartite::new(&graph);
-        assert_eq!(bipartite.is_bipartite(), true);
+        assert!(bipartite.is_bipartite());
     }
 
     #[test]
@@ -85,6 +85,6 @@ mod test {
         let graph = graph_generator::bipartite(5, 8, 18);
 
         let bipartite = Bipartite::new(&graph);
-        assert_eq!(bipartite.is_bipartite(), true);
+        assert!(bipartite.is_bipartite());
     }
 }

@@ -92,7 +92,7 @@ mod test {
         dag.add_edge(7, 6);
 
         let topological = Topological::new(&dag);
-        assert_eq!(topological.has_order(), true);
+        assert!(topological.has_order());
         assert_eq!(
             topological.order().collect::<Vec<usize>>(),
             vec![8, 7, 2, 3, 0, 5, 1, 6, 9, 10, 11, 12, 4]
@@ -116,7 +116,7 @@ mod test {
         let sg = SymbolDigraph::new(data, "/");
         let topological = Topological::new(sg.digraph());
 
-        assert_eq!(topological.has_order(), true);
+        assert!(topological.has_order());
         let order: Vec<&str> = topological.order().map(|v| sg.name_of(v)).collect();
         assert_eq!(
             order,

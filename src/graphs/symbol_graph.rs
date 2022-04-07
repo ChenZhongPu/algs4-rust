@@ -80,7 +80,7 @@ mod test {
         ];
 
         let sg = SymbolGraph::new(data, " ");
-        assert_eq!(sg.contains("JFK"), true);
+        assert!(sg.contains("JFK"));
         let graph = sg.graph();
 
         let mut adjs = Vec::new();
@@ -92,7 +92,7 @@ mod test {
         adjs.sort_unstable();
         assert_eq!(adjs, vec!["ATL", "MCO", "ORD"]);
 
-        assert_eq!(sg.contains("LAB"), false);
+        assert!(!sg.contains("LAB"));
         let mut adjs = Vec::new();
         if let Some(s) = sg.index_of("LAX") {
             for v in graph.adj(s).clone() {
