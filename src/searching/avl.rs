@@ -147,6 +147,7 @@ impl<K: Ord, V> Node<K, V> {
     //     / \                            / \
     //    T2   T3                      T1   T2
     pub fn re_balance(mut self) -> Box<Node<K, V>> {
+        self.update_height();
         match self.balance_factor() {
             -2 => {
                 // it must has a `right`
@@ -193,9 +194,8 @@ impl<K: Ord, V> AVL<K, V> {
                     std::cmp::Ordering::Equal => node.val = new_node.val,
                     std::cmp::Ordering::Greater => node.right = Self::_put(new_node, node.right),
                 }
-                // 2. Update height
-                node.update_height();
-                // 3. Re-balance if needed
+                // node.update_height();
+                // 2. Update height, and 3. re-balance if needed
                 node = Node::re_balance(*node);
                 Some(node)
             }
@@ -305,5 +305,14 @@ mod tests {
         assert_eq!(st.get(&6), Some(&String::from("six")));
 
         assert_eq!(st.height(), 4);
+    }
+
+    #[test]
+    fn balance() {
+        let mut st = AVL::new();
+        for i in 0..200 {
+            st.put(i, i.to_string());
+        }
+        assert_eq!(st.height(), 8);
     }
 }
