@@ -2,7 +2,7 @@
 //!
 //! Most-significant digit first string sort.
 const R: usize = 256; // radix
-const M: usize = 15; // cutoff for small sub-arrays
+const M: usize = 3; // cutoff for small sub-arrays
 pub struct MSD;
 
 impl MSD {
@@ -37,12 +37,16 @@ impl MSD {
         // distribute
         for i in lo..=hi {
             aux[count[(MSD::char_at(a[i], d) + 1) as usize]] = a[i];
+            count[(MSD::char_at(a[i], d) + 1) as usize] += 1;
         }
         // copy back
         a[lo..=hi].copy_from_slice(&aux[0..=hi - lo]);
         // recursively sort for each character value
         for r in 0..R {
-            MSD::_sort(a, aux, lo + count[r], lo + count[r + 1] - 1, d + 1);
+            // `hi` may less than 0
+            if (lo + count[r + 1]).saturating_sub(1) > lo + count[r] {
+                MSD::_sort(a, aux, lo + count[r], lo + count[r + 1] - 1, d + 1);
+            }
         }
     }
 }
