@@ -6,7 +6,7 @@ pub struct LSD;
 impl LSD {
     /// To sort a list of strings that each have exactly `w` characters.
     /// We sort the strings `w` times with key-indexed counting, proceeding from the right to left.
-    pub fn sort(a: &mut Vec<&str>, w: usize) {
+    pub fn sort(a: &mut [&str], w: usize) {
         // sort `a` on leading `w` characters
         let n = a.len();
         let r = 256;
