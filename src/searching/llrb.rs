@@ -101,6 +101,12 @@ pub struct LLRB<K: Ord> {
     root: Link<K>,
 }
 
+impl<K: Ord> Default for LLRB<K> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<K: Ord> LLRB<K> {
     pub fn new() -> Self {
         LLRB { root: None }
