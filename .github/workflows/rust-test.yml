@@ -9,9 +9,12 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
       - name: Set up Rust Toolchain
         uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
       - name: Cargo check
         uses: actions-rs/cargo@v1
         with:
