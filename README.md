@@ -7,5 +7,5 @@
 Copy the `pre-commit` file into `.git/hooks`, and then make it executable.
 
 ```sh
-chmod +x ./git/hooks/pre-commit
+chmod +x .git/hooks/pre-commit
 ```
