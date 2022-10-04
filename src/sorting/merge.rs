@@ -3,16 +3,14 @@
 //! Divide-and-conquer: sort the left half and right half, and then merge
 // use std::cmp::PartialOrd;
 
-pub fn sort<T: Copy + PartialOrd + Default>(a: &mut [T]) {
+pub fn sort<T: Copy + PartialOrd>(a: &mut [T]) {
     merge_sort(a, 0, a.len() - 1);
 }
 
-fn merge<T: Copy + PartialOrd + Default>(a: &mut [T], lo: usize, mid: usize, hi: usize) {
+fn merge<T: Copy + PartialOrd>(a: &mut [T], lo: usize, mid: usize, hi: usize) {
     let (n_l, n_r) = (mid - lo + 1, hi - mid);
-    let mut left = vec![T::default(); n_l];
-    left.copy_from_slice(&a[lo..mid + 1]);
-    let mut right = vec![T::default(); n_r];
-    right.copy_from_slice(&a[mid + 1..hi + 1]);
+    let left = a[lo..mid + 1].to_vec();
+    let right = a[mid + 1..hi + 1].to_vec();
 
     let (mut i, mut j, mut k) = (0, 0, lo);
     while i < n_l && j < n_r {
@@ -37,7 +35,7 @@ fn merge<T: Copy + PartialOrd + Default>(a: &mut [T], lo: usize, mid: usize, hi:
     }
 }
 
-fn merge_sort<T: Copy + PartialOrd + Default>(a: &mut [T], lo: usize, hi: usize) {
+fn merge_sort<T: Copy + PartialOrd>(a: &mut [T], lo: usize, hi: usize) {
     if hi <= lo {
         return;
     }
