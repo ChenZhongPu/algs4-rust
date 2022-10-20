@@ -35,13 +35,19 @@ impl<T> LinkedStack<T> {
             next: self.first.take(),
         });
         self.first = Some(new_node);
+        self.n += 1;
     }
 
     pub fn pop(&mut self) -> Option<T> {
         self.first.take().map(|node| {
             self.first = node.next;
+            self.n -= 1;
             node.item
         })
+    }
+
+    pub fn peek(&self) -> Option<&T> {
+        self.first.as_ref().map(|node| &node.item)
     }
 
     pub fn iter(&self) -> Iter<'_, T> {
@@ -116,9 +122,14 @@ mod tests {
         s.push(4);
         s.push(5);
         s.push(6);
+        assert_eq!(s.size(), 3);
+        assert_eq!(s.peek(), Some(&6));
         assert_eq!(s.pop(), Some(6));
+        assert_eq!(s.peek(), Some(&5));
+
         assert_eq!(s.pop(), Some(5));
         assert_eq!(s.pop(), Some(4));
+        assert_eq!(s.size(), 0);
         assert_eq!(s.pop(), None);
     }
 
