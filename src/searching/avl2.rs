@@ -1,8 +1,8 @@
 //!# AVL tree is a self-balancing binary search tree.
 //!
 //! The difference between heights of left and right subtrees cannot be more than one for all nodes.
-//! 
-//! 
+//!
+//!
 
 type Link<K, V> = Option<Box<Node<K, V>>>;
 struct Node<K, V> {
@@ -15,29 +15,35 @@ struct Node<K, V> {
 
 impl<K, V> Node<K, V> {
     fn new(k: K, v: V) -> Self {
-        Node { key: k, val: v, height: 1, left: None, right: None }
+        Node {
+            key: k,
+            val: v,
+            height: 1,
+            left: None,
+            right: None,
+        }
     }
 
     fn get_height(link: &Link<K, V>) -> usize {
         match link {
             None => 0,
-            Some(node) => node.height
+            Some(node) => node.height,
         }
     }
 
     fn update_height(node: &mut Box<Node<K, V>>) {
         node.height = Self::get_height(&node.left).max(Self::get_height(&node.right)) + 1;
     }
-    
+
     fn get_balance_factor(link: &Link<K, V>) -> i8 {
         // left.height - right.height
         match link {
             None => 0,
-            Some(node) => Node::balance_factor(node)
+            Some(node) => Node::balance_factor(node),
         }
     }
 
-    fn balance_factor(node: &Box<Node<K, V>>) -> i8 {
+    fn balance_factor(node: &Node<K, V>) -> i8 {
         (Node::get_height(&node.left) as i64 - Node::get_height(&node.right) as i64) as i8
     }
 
@@ -66,22 +72,20 @@ impl<K, V> Node<K, V> {
     }
 }
 
-
 impl<K, V> Node<K, V> {
-
-    fn min_key(x: &Box<Node<K, V>>) -> &K {
-        if x.left.is_none() {
-            &x.key
+    fn min_key(&self) -> &K {
+        if self.left.is_none() {
+            &self.key
         } else {
-            Self::min_key(x.left.as_ref().unwrap())
+            self.left.as_ref().unwrap().min_key()
         }
     }
 
-    fn max_key(x: &Box<Node<K, V>>) -> &K {
-        if x.right.is_none() {
-            &x.key
+    fn max_key(&self) -> &K {
+        if self.right.is_none() {
+            &self.key
         } else {
-            Self::max_key(x.right.as_ref().unwrap())
+            self.right.as_ref().unwrap().max_key()
         }
     }
 }
@@ -99,7 +103,10 @@ impl<K, V> Node<K, V> {
     //     left_most
     // }
 
-    fn extract_min_left(mut x: Box<Node<K, V>>, left: Box<Node<K, V>>) -> (Link<K, V>, Box<Node<K, V>>) {
+    fn extract_min_left(
+        mut x: Box<Node<K, V>>,
+        left: Box<Node<K, V>>,
+    ) -> (Link<K, V>, Box<Node<K, V>>) {
         let (new_left, min) = Self::extract_min(left);
         x.left = new_left;
         Self::update_height(&mut x);
@@ -109,7 +116,7 @@ impl<K, V> Node<K, V> {
     fn extract_min(mut x: Box<Node<K, V>>) -> (Link<K, V>, Box<Node<K, V>>) {
         match x.left.take() {
             Some(left) => Self::extract_min_left(x, left),
-            None => (x.right.take(), x)
+            None => (x.right.take(), x),
         }
     }
 }
@@ -137,7 +144,7 @@ impl<K, V> Node<K, V> {
 }
 
 pub struct AVL<K, V> {
-    root: Link<K, V>
+    root: Link<K, V>,
 }
 
 impl<K, V> AVL<K, V> {
@@ -155,13 +162,12 @@ impl<K, V> AVL<K, V> {
 }
 
 impl<K: Ord, V> AVL<K, V> {
-
     pub fn min(&self) -> Option<&K> {
-        self.root.as_ref().map(|node| Node::min_key(node))
+        self.root.as_ref().map(|node| node.min_key())
     }
 
     pub fn max(&self) -> Option<&K> {
-        self.root.as_ref().map(|node| Node::max_key(node))
+        self.root.as_ref().map(|node| node.max_key())
     }
 }
 
@@ -173,7 +179,7 @@ impl<K: Ord, V> AVL<K, V> {
                 std::cmp::Ordering::Less => Self::_get(&node.left, key),
                 std::cmp::Ordering::Equal => Some(&node.val),
                 std::cmp::Ordering::Greater => Self::_get(&node.right, key),
-            }
+            },
         }
     }
     pub fn get(&self, key: &K) -> Option<&V> {
@@ -188,7 +194,7 @@ impl<K: Ord, V> AVL<K, V> {
 impl<K: Ord, V> AVL<K, V> {
     fn _put(key: K, value: V, current: Link<K, V>) -> Link<K, V> {
         match current {
-            None => return Some(Box::new(Node::new(key, value))),
+            None => Some(Box::new(Node::new(key, value))),
             Some(mut x) => {
                 match key.cmp(&x.key) {
                     std::cmp::Ordering::Less => x.left = AVL::_put(key, value, x.left.take()),
@@ -199,7 +205,7 @@ impl<K: Ord, V> AVL<K, V> {
             }
         }
     }
-    
+
     pub fn put(&mut self, key: K, value: V) {
         self.root = AVL::_put(key, value, self.root.take());
         self.check();
@@ -210,7 +216,7 @@ impl<K: Ord, V> AVL<K, V> {
     fn _remove(key: &K, current: Link<K, V>) -> Link<K, V> {
         match current {
             Some(mut x) => {
-                match key.cmp(&x.key){
+                match key.cmp(&x.key) {
                     std::cmp::Ordering::Less => x.left = AVL::_remove(key, x.left.take()),
                     std::cmp::Ordering::Equal => {
                         if x.left.is_none() {
@@ -228,11 +234,11 @@ impl<K: Ord, V> AVL<K, V> {
                         x = new_root;
                         x.right = new_right;
                         x.left = t.left;
-                    },
+                    }
                     std::cmp::Ordering::Greater => x.right = AVL::_remove(key, x.right.take()),
                 }
                 Some(Node::re_balance(x))
-            },
+            }
             None => None,
         }
     }
@@ -241,11 +247,15 @@ impl<K: Ord, V> AVL<K, V> {
         self.root = AVL::_remove(key, self.root.take());
         self.check();
     }
+}
 
+impl<K: Ord, V> Default for AVL<K, V> {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl<K: Ord, V> AVL<K, V> {
-
     fn check(&self) {
         if !self.is_bst() {
             panic!("Not in symmetric order");
@@ -274,18 +284,19 @@ impl<K: Ord, V> AVL<K, V> {
     fn is_bst(&self) -> bool {
         match &self.root {
             None => true,
-            Some(node) => Self::_is_bst(&self.root, Node::min_key(node), Node::max_key(node))
+            Some(node) => Self::_is_bst(&self.root, node.min_key(), node.max_key()),
         }
     }
 
     fn _is_bst(x: &Link<K, V>, min: &K, max: &K) -> bool {
         match x {
             Some(node) => {
-                return &node.key >= min && &node.key <= max &&
-                    Self::_is_bst(&node.left, min, &node.key) &&
-                    Self::_is_bst(&node.right, &node.key, max)
-            },
-            None => true
+                &node.key >= min
+                    && &node.key <= max
+                    && Self::_is_bst(&node.left, min, &node.key)
+                    && Self::_is_bst(&node.right, &node.key, max)
+            }
+            None => true,
         }
     }
 }
@@ -301,7 +312,6 @@ mod tests {
         st.put(5, String::from("five"));
         st.put(3, String::from("three"));
         st.put(2, String::from("two"));
-
 
         assert_eq!(st.get(&5), Some(&String::from("five")));
 
@@ -330,11 +340,11 @@ mod tests {
         for i in 0..1000 {
             st.put(i, i.to_string());
         }
-        assert_eq!(st.contains(&600), true);
+        assert!(st.contains(&600));
 
         for i in (500..1000).step_by(10) {
             st.remove(&i);
         }
-        assert_eq!(st.contains(&600), false);
+        assert!(!st.contains(&600));
     }
 }
