@@ -1,4 +1,5 @@
 pub mod avl;
+pub mod avl2;
 pub mod binary_search_st;
 pub mod bst;
 pub mod bst2;
