@@ -2,46 +2,39 @@
 //!
 //! Divide-and-conquer: sort the left half and right half, and then merge
 use std::cmp::PartialOrd;
-
 pub fn sort<T: Copy + PartialOrd>(a: &mut [T]) {
     let mid = a.len() / 2;
     if mid == 0 {
         return;
     }
-
-    sort(&mut a[..mid]);
-    sort(&mut a[mid..]);
-
-    let mut aux = a.to_vec();
-    merge(&a[..mid], &a[mid..], &mut aux[..]);
-
-    // copy back to the original array
-    a.copy_from_slice(&aux);
+    let (left, right) = a.split_at_mut(mid);
+    sort(left);
+    sort(right);
+    let result = merge(left, right);
+    a.copy_from_slice(&result);
 }
 
-fn merge<T: Copy + PartialOrd>(left: &[T], right: &[T], aux: &mut [T]) {
-    // head of left, head of right, and index
-    let (mut i, mut j, mut k) = (0, 0, 0);
-
+// Alternatively, we can pass a slice to the merge function as the result
+fn merge<T: Copy + PartialOrd>(left: &[T], right: &[T]) -> Vec<T> {
+    let mut result = Vec::with_capacity(left.len() + right.len());
+    let (mut i, mut j) = (0, 0);
     while i < left.len() && j < right.len() {
-        if left[i] <= right[j] {
-            aux[k] = left[i];
-            k += 1;
+        if left[i] < right[j] {
+            result.push(left[i]);
             i += 1;
         } else {
-            aux[k] = right[j];
-            k += 1;
+            result.push(right[j]);
             j += 1;
         }
     }
-
-    // copy the rest to returned aux
     if i < left.len() {
-        aux[k..].copy_from_slice(&left[i..]);
+        result.extend_from_slice(&left[i..]);
     }
     if j < right.len() {
-        aux[k..].copy_from_slice(&right[j..]);
+        result.extend_from_slice(&right[j..]);
     }
+
+    result
 }
 
 #[cfg(test)]

@@ -207,7 +207,7 @@ impl<K: Ord, V> AVL<K, V> {
         Self::_get(&self.root, k)
     }
 
-    fn _get<'a, 'b>(x: &'a Link<K, V>, k: &'b K) -> Option<&'a V> {
+    fn _get<'a>(x: &'a Link<K, V>, k: &K) -> Option<&'a V> {
         match x {
             Some(node) => match k.cmp(&node.key) {
                 std::cmp::Ordering::Less => Self::_get(&node.left, k),

@@ -44,7 +44,7 @@ impl<K: Ord, V> BST<K, V> {
         self.get(k).is_some()
     }
 
-    fn _get<'a, 'b>(x: &'a Link<K, V>, k: &'b K) -> Option<&'a V> {
+    fn _get<'a>(x: &'a Link<K, V>, k: &K) -> Option<&'a V> {
         if let Some(node) = x {
             match k.cmp(&node.key) {
                 Ordering::Less => Self::_get(&node.left, k),
@@ -204,7 +204,7 @@ impl<K: Ord, V> BST<K, V> {
                 } else {
                     let mut r = x.right.take();
                     if let Some(ref mut y) = r {
-                        x.right = std::mem::replace(&mut y.left, None);
+                        x.right = y.left.take();
                     }
                     r
                 }
@@ -236,7 +236,7 @@ impl<K: Ord, V> BST<K, V> {
         Self::_floor(&self.root, key)
     }
 
-    fn _floor<'a, 'b>(x: &'a Link<K, V>, key: &'b K) -> Option<&'a K> {
+    fn _floor<'a>(x: &'a Link<K, V>, key: &K) -> Option<&'a K> {
         if let Some(node) = x {
             match node.key.cmp(key) {
                 Ordering::Equal => Some(&node.key),
@@ -256,7 +256,7 @@ impl<K: Ord, V> BST<K, V> {
         Self::_ceiling(&self.root, key)
     }
 
-    fn _ceiling<'a, 'b>(x: &'a Link<K, V>, key: &'b K) -> Option<&'a K> {
+    fn _ceiling<'a>(x: &'a Link<K, V>, key: &K) -> Option<&'a K> {
         match x {
             Some(node) => match node.key.cmp(key) {
                 Ordering::Equal => Some(&node.key),

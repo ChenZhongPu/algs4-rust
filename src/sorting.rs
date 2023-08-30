@@ -4,6 +4,7 @@ pub mod index_min_pq;
 pub mod insertion;
 pub mod max_pq;
 pub mod merge;
+pub mod merge2;
 pub mod merge_bu;
 pub mod merge_bu2;
 pub mod merge_slice;

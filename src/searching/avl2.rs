@@ -172,7 +172,7 @@ impl<K: Ord, V> AVL<K, V> {
 }
 
 impl<K: Ord, V> AVL<K, V> {
-    fn _get<'a, 'b>(x: &'a Link<K, V>, key: &'b K) -> Option<&'a V> {
+    fn _get<'a>(x: &'a Link<K, V>, key: &K) -> Option<&'a V> {
         match x {
             None => None,
             Some(node) => match key.cmp(&node.key) {

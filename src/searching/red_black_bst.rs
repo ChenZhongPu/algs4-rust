@@ -144,7 +144,7 @@ impl<K: Ord, V> RedBlackBST<K, V> {
         self.root.is_none()
     }
 
-    fn _get<'a, 'b>(x: &'a Link<K, V>, k: &'b K) -> Option<&'a V> {
+    fn _get<'a>(x: &'a Link<K, V>, k: &K) -> Option<&'a V> {
         match x {
             Some(node) => match k.cmp(&node.key) {
                 Ordering::Equal => Some(&node.val),
@@ -252,7 +252,7 @@ impl<K: Ord, V> RedBlackBST<K, V> {
         Self::_max(&self.root)
     }
 
-    fn _floor<'a, 'b>(x: &'a Link<K, V>, k: &'b K) -> Option<&'a K> {
+    fn _floor<'a>(x: &'a Link<K, V>, k: &K) -> Option<&'a K> {
         match x {
             Some(node) => match k.cmp(&node.key) {
                 Ordering::Equal => Some(&node.key),
@@ -271,7 +271,7 @@ impl<K: Ord, V> RedBlackBST<K, V> {
         Self::_floor(&self.root, k)
     }
 
-    fn _ceiling<'a, 'b>(x: &'a Link<K, V>, k: &'b K) -> Option<&'a K> {
+    fn _ceiling<'a>(x: &'a Link<K, V>, k: &K) -> Option<&'a K> {
         match x {
             Some(node) => match k.cmp(&node.key) {
                 Ordering::Equal => Some(&node.key),

@@ -98,7 +98,7 @@ impl<K: Ord, V> BST<K, V> {
         self.size() == 0
     }
 
-    fn _get<'a, 'b>(x: &'a Link<K, V>, k: &'b K) -> Option<&'a V> {
+    fn _get<'a>(x: &'a Link<K, V>, k: &K) -> Option<&'a V> {
         if let Some(node) = x {
             match k.cmp(&node.key) {
                 Ordering::Less => Self::_get(&node.left, k),
@@ -147,7 +147,7 @@ impl<K: Ord, V> BST<K, V> {
         Self::_max(&self.root)
     }
 
-    fn _floor<'a, 'b>(x: &'a Link<K, V>, k: &'b K) -> Option<&'a K> {
+    fn _floor<'a>(x: &'a Link<K, V>, k: &K) -> Option<&'a K> {
         match x {
             Some(node) => match k.cmp(&node.key) {
                 Ordering::Equal => Some(&node.key),
@@ -167,7 +167,7 @@ impl<K: Ord, V> BST<K, V> {
         Self::_floor(&self.root, k)
     }
 
-    fn _ceiling<'a, 'b>(x: &'a Link<K, V>, k: &'b K) -> Option<&'a K> {
+    fn _ceiling<'a>(x: &'a Link<K, V>, k: &K) -> Option<&'a K> {
         match x {
             Some(node) => match k.cmp(&node.key) {
                 Ordering::Equal => Some(&node.key),
