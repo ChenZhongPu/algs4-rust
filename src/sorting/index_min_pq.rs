@@ -159,7 +159,7 @@ mod tests {
 
     #[test]
     fn insert_del() {
-        let v = vec![
+        let v = [
             "it", "was", "the", "best", "of", "times", "it", "was", "the", "worst",
         ];
 
@@ -179,7 +179,7 @@ mod tests {
 
     #[test]
     fn key_of() {
-        let v = vec!["it", "was", "the", "best"];
+        let v = ["it", "was", "the", "best"];
 
         let mut pq = IndexMinPQ::new(10);
 
@@ -196,7 +196,7 @@ mod tests {
 
     #[test]
     fn change_key() {
-        let v = vec!["it", "was", "the", "best"];
+        let v = ["it", "was", "the", "best"];
 
         let mut pq = IndexMinPQ::new(v.len());
 
