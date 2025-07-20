@@ -43,6 +43,6 @@ mod test {
     #[test]
     fn edge() {
         let edge = DirectedEdge::new(12, 34, 5.67);
-        println!("{}", edge);
+        println!("{edge}");
     }
 }

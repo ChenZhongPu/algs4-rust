@@ -1,7 +1,6 @@
 pub mod acyclic_sp;
 pub mod bfs_directed_paths;
 pub mod bfs_paths;
-pub mod bipartite;
 pub mod cc;
 pub mod cycle;
 pub mod dfs;
@@ -16,7 +15,6 @@ pub mod directed_dfs;
 pub mod directed_edge;
 pub mod edge;
 pub mod graph;
-pub mod graph_generator;
 pub mod kosaraju_scc;
 pub mod kruskal_mst;
 pub mod lazy_prim_mst;

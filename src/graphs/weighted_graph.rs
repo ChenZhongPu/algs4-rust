@@ -71,9 +71,9 @@ impl std::fmt::Display for EdgeWeightedGraph {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "{} {}", self.v, self.e)?;
         for v in 0..self.v {
-            write!(f, "{}: ", v)?;
+            write!(f, "{v}: ")?;
             for edge in self.adj(v) {
-                write!(f, "{}  ", edge)?;
+                write!(f, "{edge}  ")?;
             }
             writeln!(f)?;
         }
@@ -104,7 +104,7 @@ mod test {
         g.add_edge(Edge::new(3, 6, 0.52));
         g.add_edge(Edge::new(6, 0, 0.58));
         g.add_edge(Edge::new(6, 4, 0.93));
-        println!("{}", g);
+        println!("{g}");
 
         assert_eq!(g.e(), 16);
     }

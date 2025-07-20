@@ -274,7 +274,7 @@ impl<K: Ord, V> BST<K, V> {
     /// Note rank 0 is the smallest key.
     pub fn select(&self, rank: usize) -> Option<&K> {
         if rank >= self.size() {
-            panic!("argument to select is invalid: {} ", rank);
+            panic!("argument to select is invalid: {rank} ");
         }
         Self::_select(&self.root, rank)
     }

@@ -80,9 +80,9 @@ impl fmt::Display for Digraph {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         writeln!(f, "{} vertices, {} edges", self.v, self.e)?;
         for (i, adj) in self.adj.iter().enumerate() {
-            write!(f, "{}: ", i)?;
+            write!(f, "{i}: ")?;
             for v in adj {
-                write!(f, "{} ", v)?;
+                write!(f, "{v} ")?;
             }
             writeln!(f)?;
         }
@@ -129,6 +129,6 @@ mod test {
         tmp.sort_unstable();
         assert_eq!(tmp, vec![0, 4, 9]);
 
-        println!("{}", digraph);
+        println!("{digraph}");
     }
 }

@@ -105,7 +105,7 @@ mod test {
         assert!((sp.dist_to(0) - 0.0).abs() < f64::EPSILON);
 
         assert!((sp.dist_to(1) - 1.05).abs() < f64::EPSILON);
-        sp.path_to(1).for_each(|x| print!("{};", x));
+        sp.path_to(1).for_each(|x| print!("{x};"));
         println!();
 
         assert!((sp.dist_to(2) - 0.26).abs() < f64::EPSILON);

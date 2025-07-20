@@ -56,9 +56,9 @@ impl fmt::Display for Graph {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         writeln!(f, "{} vertices, {} edges", self.v, self.e)?;
         for (i, adj) in self.adj.iter().enumerate() {
-            write!(f, "{}: ", i)?;
+            write!(f, "{i}: ")?;
             for v in adj {
-                write!(f, "{} ", v)?;
+                write!(f, "{v} ")?;
             }
             writeln!(f)?;
         }
@@ -95,6 +95,6 @@ mod tests {
         tmp.sort_unstable();
         assert_eq!(tmp, vec![10, 11, 12]);
 
-        println!("{}", graph);
+        println!("{graph}");
     }
 }

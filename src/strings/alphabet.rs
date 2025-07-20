@@ -13,7 +13,7 @@ impl Alphabet {
         let mut unicode = vec![false; UNICODE_SIZE];
         for c in alpha.chars() {
             if unicode[c as usize] {
-                panic!("Illegal alphabet: repeated character = {}", c);
+                panic!("Illegal alphabet: repeated character = {c}");
             }
             unicode[c as usize] = true;
         }
@@ -72,7 +72,7 @@ impl Alphabet {
     pub fn to_index(&self, c: char) -> u16 {
         match self.inverse[c as usize] {
             Some(i) => i,
-            None => panic!("Character {} not in alphabet", c),
+            None => panic!("Character {c} not in alphabet"),
         }
     }
 

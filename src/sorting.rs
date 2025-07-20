@@ -11,6 +11,7 @@ pub mod merge_slice;
 pub mod min_pq;
 pub mod quick;
 pub mod quick2;
+pub mod quick3;
 pub mod quick_three_way;
 pub mod selection;
 pub mod shell;

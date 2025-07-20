@@ -67,9 +67,9 @@ impl std::fmt::Display for EdgeWeightedDiagraph {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "{} {}", self.v, self.e)?;
         for (i, adj) in self.adj.iter().enumerate() {
-            write!(f, "{}: ", i)?;
+            write!(f, "{i}: ")?;
             for edge in adj {
-                write!(f, "{}; ", edge)?;
+                write!(f, "{edge}; ")?;
             }
             writeln!(f)?;
         }
@@ -100,6 +100,6 @@ mod test {
         g.add_edge(DirectedEdge::new(6, 0, 0.58));
         g.add_edge(DirectedEdge::new(6, 4, 0.93));
 
-        println!("{}", g);
+        println!("{g}");
     }
 }
